@@ -1,0 +1,5 @@
+# Tutto il sito è visibile ai motori di ricerca
+User-agent: *
+Allow: /
+
+Sitemap: https://emanuelelombardi.com/sitemap.xml
