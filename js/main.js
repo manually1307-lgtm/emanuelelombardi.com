@@ -840,7 +840,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   const btn = block.querySelector('[data-name-toggle]');
   const desktop = window.matchMedia('(min-width: 821px)');
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const unit = () => Math.min(window.innerWidth, 1920) / 1440;
+  const unit = () => Math.min(Math.min(window.innerWidth, 1920) / 1440, window.innerHeight / 900);   // = --h nel css
   const LABEL_FULL = 'Emanuele Lombardi, Videomaker and Photographer';
   const LABEL_SHORT = 'Manu, Videomaker and Photographer';
 

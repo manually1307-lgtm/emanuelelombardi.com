@@ -344,20 +344,29 @@ button.tile:hover img { transform: scale(1.03); }
 .portrait img { object-position: center top; } /* il taglio si fa solo in basso: spazio sopra la testa intatto */
 
 /* ---------- Apertura ---------- */
-.hero { position: relative; }
+/* Su desktop l'apertura occupa esattamente lo schermo. --h è l'unità della composizione:
+   la più piccola tra larghezza (1440 di riferimento) e altezza (900 di riferimento),
+   così su schermi larghi ma bassi (es. MacBook) mazzo e nome si rimpiccioliscono in proporzione
+   e la riga in basso resta sempre visibile. --oy centra la composizione in verticale se avanza spazio. */
+.hero {
+  position: relative;
+  --h: min(var(--u), calc(100svh / 900));
+  --oy: calc((100svh - 900 * var(--h)) / 2);
+}
 
 .hero-stage {
   position: relative;
-  height: calc(900 * var(--u));
-  min-height: 640px;
+  height: 100vh;
+  height: 100svh;
+  min-height: 480px;
 }
 
 .reel-stack {
   position: absolute;
-  left: calc(445 * var(--u));
-  top: calc(210 * var(--u));
-  width: calc(488 * var(--u));
-  height: calc(275 * var(--u));
+  left: calc(50% - 275 * var(--h));          /* = 445 su 1440, ma resta centrato */
+  top: calc(var(--oy) + 210 * var(--h));
+  width: calc(488 * var(--h));
+  height: calc(275 * var(--h));
 }
 
 /* Mazzo di showreel: ogni card ha la sua posizione (data-pos 0 = davanti) */
@@ -383,14 +392,14 @@ button.tile:hover img { transform: scale(1.03); }
 
 /* Posizione a riposo (come in Figma) */
 .deck-card[data-pos="0"] { z-index: 3; }
-.deck-card[data-pos="1"] { z-index: 2; --x: calc(10 * var(--u)); --y: calc(-8 * var(--u)); --r: 3deg; }
-.deck-card[data-pos="2"] { z-index: 1; --x: calc(26 * var(--u)); --y: calc(-20 * var(--u)); --r: 8deg; }
+.deck-card[data-pos="1"] { z-index: 2; --x: calc(10 * var(--h)); --y: calc(-8 * var(--h)); --r: 3deg; }
+.deck-card[data-pos="2"] { z-index: 1; --x: calc(26 * var(--h)); --y: calc(-20 * var(--h)); --r: 8deg; }
 
 @media (hover: hover) and (pointer: fine) {
   /* Il mazzo si apre */
-  .deck:hover .deck-card[data-pos="0"] { --x: calc(-46 * var(--u)); --y: calc(22 * var(--u)); --r: -5deg; }
-  .deck:hover .deck-card[data-pos="1"] { --x: calc(22 * var(--u)); --y: calc(-12 * var(--u)); --r: 2deg; }
-  .deck:hover .deck-card[data-pos="2"] { --x: calc(92 * var(--u)); --y: calc(-38 * var(--u)); --r: 9deg; }
+  .deck:hover .deck-card[data-pos="0"] { --x: calc(-46 * var(--h)); --y: calc(22 * var(--h)); --r: -5deg; }
+  .deck:hover .deck-card[data-pos="1"] { --x: calc(22 * var(--h)); --y: calc(-12 * var(--h)); --r: 2deg; }
+  .deck:hover .deck-card[data-pos="2"] { --x: calc(92 * var(--h)); --y: calc(-38 * var(--h)); --r: 9deg; }
 
   /* La card sotto il mouse si accende e cresce un po', restando al suo posto nel mazzo:
      è il clic a portarla davanti */
@@ -404,20 +413,20 @@ button.tile:hover img { transform: scale(1.03); }
 .name-block {
   position: absolute;
   z-index: 2;
-  left: calc(243 * var(--u));
-  top: calc(430 * var(--u));
+  left: calc(50% - 477 * var(--h));          /* = 243 su 1440 */
+  top: calc(var(--oy) + 430 * var(--h));
   pointer-events: none;
 }
 
 .hero-hi,
 .hero-role {
-  font-size: max(18px, calc(24 * var(--u)));
+  font-size: max(18px, calc(24 * var(--h)));
   letter-spacing: 0.03em;
   line-height: 1.2;
 }
 
 /* Rientro ottico: allinea "Hi, I'm" all'asta della E, non al bordo del box */
-.hero-hi { margin: 0 0 calc(14 * var(--u)) calc(11 * var(--u)); }
+.hero-hi { margin: 0 0 calc(14 * var(--h)) calc(11 * var(--h)); }
 
 .hero-name {
   display: grid;
@@ -428,12 +437,12 @@ button.tile:hover img { transform: scale(1.03); }
 .name-line {
   display: flex;
   align-items: last baseline;
-  gap: calc(19 * var(--u));
+  gap: calc(19 * var(--h));
 }
 
 .hero-first,
 .hero-last {
-  font-size: calc(160 * var(--u));
+  font-size: calc(160 * var(--h));
   line-height: .88;
   letter-spacing: -0.05em;
   text-transform: uppercase;
@@ -447,7 +456,7 @@ button.tile:hover img { transform: scale(1.03); }
 
 /* ---- Nome interattivo: hover = si ingrandisce, click = diventa MANU ---- */
 .name-block {
-  transform: translate(calc(var(--dx, 0) * var(--u)), calc(var(--dy, 0) * var(--u))) scale(var(--s, 1));
+  transform: translate(calc(var(--dx, 0) * var(--h)), calc(var(--dy, 0) * var(--h))) scale(var(--s, 1));
   transform-origin: center;
   transition: transform .6s cubic-bezier(.2, .8, .2, 1);
 }
@@ -465,7 +474,7 @@ button.tile:hover img { transform: scale(1.03); }
   position: absolute;
   left: var(--pad);
   right: var(--pad);
-  top: calc(842 * var(--u));
+  bottom: 35px;   /* testo a 36 px dal fondo: la stessa distanza dei testi dell'header dall'alto */
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -484,11 +493,12 @@ button.tile:hover img { transform: scale(1.03); }
 @media (max-width: 820px) {
   .hero-stage {
     height: auto;
-    min-height: 0;
+    min-height: 100vh;
+    min-height: 100svh;            /* l'apertura riempie lo schermo: la riga "Scroll / Based in" sta in fondo */
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: calc(96px + env(safe-area-inset-top, 0px)) var(--pad) var(--section-end);
+    padding: calc(96px + env(safe-area-inset-top, 0px)) var(--pad) calc(28px + env(safe-area-inset-bottom, 0px));
   }
   .name-block,
   .hero-bar { position: static; }
@@ -506,7 +516,7 @@ button.tile:hover img { transform: scale(1.03); }
   .hero-last { order: 2; }
   .hero-role { order: 3; margin-top: 16px; white-space: normal; }
   .name-block { --dx: 0 !important; --dy: 0 !important; transform-origin: left center; }
-  .hero-bar { margin-top: 32px; font-size: 13px; letter-spacing: 0.04em; }
+  .hero-bar { margin-top: auto; padding-top: 16px; font-size: 13px; letter-spacing: 0.04em; }   /* in fondo, a 29 px dal bordo come l'header dall'alto */
   .based-sep { display: none; }
   .based-br { display: inline; }
 }
