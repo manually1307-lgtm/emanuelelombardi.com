@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Emanuele Lombardi — Videomaker e fotografo a Napoli</title>
+<meta name="description" content="Emanuele Lombardi, videomaker e fotografo con base a Napoli. Commercial, brand film, eventi e fotografia in tutta Italia.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+<!-- Open Graph: anteprima quando il sito viene condiviso (WhatsApp, LinkedIn, Facebook…).
+     assets/og-image.jpg 1200x630: apertura del sito (mazzo di showreel + nome) -->
+<meta property="og:title" content="Emanuele Lombardi — Videomaker e fotografo">
+<meta property="og:description" content="Commercial, brand film, eventi e fotografia. Napoli, disponibile in tutta Italia.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://emanuelelombardi.com">
+<meta property="og:image" content="https://emanuelelombardi.com/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Emanuele Lombardi, videomaker e fotografo">
+<meta property="og:locale" content="it_IT">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- Font: Neue Haas Grotesk (Adobe Fonts) + EB Garamond Italic (Google Fonts) -->
+<link rel="stylesheet" href="https://use.typekit.net/gld1ckd.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@1,400&display=swap">
+
+<link rel="stylesheet" href="css/style.css">
+<!-- Attiva le animazioni di comparsa (senza JavaScript il sito si vede comunque tutto) -->
+<script>
+  (function () {
+    var d = document.documentElement;
+    d.classList.add('js');
+    // Intro con il logo: a ogni arrivo e a ogni ricarica, ma non tornando da un'altra pagina del sito (es. privacy)
+    var fromSite = false;
+    try {
+      var ref = document.referrer ? new URL(document.referrer) : null;
+      var home = function (p) { return p.replace(/index\.html$/, ''); };
+      var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      var reload = nav ? nav.type === 'reload' : false;
+      fromSite = !reload && !!ref && ref.origin === location.origin && home(ref.pathname) !== home(location.pathname);
+    } catch (e) {}
+    if (!fromSite && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      d.classList.add('has-intro');
+      // Con l'intro si riparte sempre dall'alto: se il browser riaprisse la pagina a metà,
+      // le comparse di quella sezione partirebbero nascoste dietro lo schermo nero.
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    }
+  })();
+</script>
+</head>
+<body>
+
+<!-- ============ INTRO ============
+     Logo grande al centro: compare, batte le ali come uno sprite retrò e vola nel suo posto
+     nell'header; intanto il sito parte (js/main.js, "intro"). -->
+<div class="intro-screen" aria-hidden="true" data-intro>
+  <svg viewBox="0 0 5 5" shape-rendering="crispEdges">
+    <path class="frame frame--open" d="M0 0h1v1H0zM4 0h1v1H4zM1 1h1v1H1zM3 1h1v1H3zM0 2h1v1H0zM1 2h1v1H1zM3 2h1v1H3zM4 2h1v1H4zM1 3h1v1H1zM3 3h1v1H3zM0 4h1v1H0zM4 4h1v1H4z"/>
+    <path class="frame frame--half" d="M1 0h1v1H1zM3 0h1v1H3zM1 1h1v1H1zM3 1h1v1H3zM0 2h1v1H0zM1 2h1v1H1zM3 2h1v1H3zM4 2h1v1H4zM1 3h1v1H1zM3 3h1v1H3zM1 4h1v1H1zM3 4h1v1H3z"/>
+    <path class="frame frame--closed" d="M1 0h1v1H1zM3 0h1v1H3zM1 1h1v1H1zM3 1h1v1H3zM1 2h1v1H1zM3 2h1v1H3zM1 3h1v1H1zM3 3h1v1H3zM1 4h1v1H1zM3 4h1v1H3z"/>
+  </svg>
+</div>
+
+<a class="skip-link" href="#lavori">Vai ai contenuti</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header" data-header>
+  <a class="logo" href="#top" aria-label="Emanuele Lombardi, torna all'inizio">
+    <!-- Logo come sprite pixel: 3 fotogrammi (ali aperte, a metà, chiuse).
+         Al passaggio del mouse si alternano a scatti come nei videogiochi retrò (css: "Logo"). -->
+    <svg viewBox="0 0 5 5" shape-rendering="crispEdges" aria-hidden="true">
+      <path class="frame frame--open" d="M0 0h1v1H0zM4 0h1v1H4zM1 1h1v1H1zM3 1h1v1H3zM0 2h1v1H0zM1 2h1v1H1zM3 2h1v1H3zM4 2h1v1H4zM1 3h1v1H1zM3 3h1v1H3zM0 4h1v1H0zM4 4h1v1H4z"/>
+      <path class="frame frame--half" d="M1 0h1v1H1zM3 0h1v1H3zM1 1h1v1H1zM3 1h1v1H3zM0 2h1v1H0zM1 2h1v1H1zM3 2h1v1H3zM4 2h1v1H4zM1 3h1v1H1zM3 3h1v1H3zM1 4h1v1H1zM3 4h1v1H3z"/>
+      <path class="frame frame--closed" d="M1 0h1v1H1zM3 0h1v1H3zM1 1h1v1H1zM3 1h1v1H3zM1 2h1v1H1zM3 2h1v1H3zM1 3h1v1H1zM3 3h1v1H3zM1 4h1v1H1zM3 4h1v1H3z"/>
+    </svg>
+  </a>
+
+  <nav class="nav" aria-label="Menu principale">
+    <a href="#lavori">Lavori</a>
+    <a href="#chi-sono">Chi sono</a>
+    <a href="#contatti">Contatti</a>
+  </nav>
+
+  <div class="header-actions">
+    <a class="badge" href="#contatti" data-badge>
+      <span class="badge-dot" aria-hidden="true"></span>
+      <span class="badge-text">
+        <span class="badge-label">Disponibile<span class="badge-date" data-badge-date></span></span>
+        <span class="badge-hover" aria-hidden="true">Sentiamoci subito!</span>
+      </span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-open>Menu</button>
+  </div>
+</header>
+
+<!-- Menu a schermo intero (mobile) -->
+<div class="menu" id="menu" hidden data-menu>
+  <div class="menu-top">
+    <span class="logo" aria-hidden="true">
+      <svg viewBox="0 0 5 5"><path d="M0 0h1v1H0zM4 0h1v1H4zM1 1h1v1H1zM3 1h1v1H3zM0 2h2v1H0zM3 2h2v1H3zM1 3h1v1H1zM3 3h1v1H3zM0 4h1v1H0zM4 4h1v1H4z"/></svg>
+    </span>
+    <button class="menu-toggle" type="button" data-menu-close>Chiudi</button>
+  </div>
+  <nav class="menu-links" aria-label="Menu">
+    <a href="#lavori">Lavori</a>
+    <a href="#chi-sono">Chi sono</a>
+    <a href="#scatti">Scatti</a>
+    <a href="#servizi">Servizi</a>
+    <a href="#contatti">Contatti</a>
+  </nav>
+  <div class="menu-bottom">
+    <a href="https://www.instagram.com/manu.ally_/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://www.linkedin.com/in/emanuele-lombardi-b5b834250/" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+</div>
+
+<main>
+
+<!-- ============ APERTURA ============ -->
+<section class="hero" id="top">
+  <div class="hero-stage">
+    <!-- MAZZO DI SHOWREEL: 3 card sovrapposte, ognuna con la sua clip che gira sempre.
+         data-pos="0" = davanti (all'avvio), 1 e 2 = dietro. Per ogni card:
+         data-full = showreel completo (link YouTube/Vimeo, oppure un MP4 nel sito),
+         data-preview = clip muta in loop, <img> = fotogramma di copertina.
+         Clic su una card dietro = passa davanti; clic su quella davanti = apre lo showreel.
+         Trascinando (desktop) o con lo swipe (telefono) si cambia card: la card resta ancorata
+         al mazzo e torna sempre al suo posto (funzione "deck" in js/main.js). -->
+    <div class="reel-stack deck" data-deck>
+      <button class="deck-card tile" data-pos="2" type="button" data-full="https://youtu.be/MAnNpvDhj5o" data-preview="assets/showreel/reel-3.mp4" aria-label="Showreel 3">
+        <img src="assets/showreel/reel-3.jpg" alt="" draggable="false">
+      </button>
+      <button class="deck-card tile" data-pos="1" type="button" data-full="https://youtu.be/MAnNpvDhj5o" data-preview="assets/showreel/reel-2.mp4" aria-label="Showreel 2">
+        <img src="assets/showreel/reel-2.jpg" alt="" draggable="false">
+      </button>
+      <button class="deck-card tile" data-pos="0" type="button" data-full="https://youtu.be/MAnNpvDhj5o" data-preview="assets/showreel/reel-1.mp4" aria-label="Showreel 1">
+        <img src="assets/showreel/reel-1.jpg" alt="" draggable="false">
+      </button>
+    </div>
+
+    <!-- Blocco nome: "Videomaker and Photographer" poggia sulla linea di base di EMANUELE
+         e LOMBARDI finisce allineato al suo bordo destro, come in Figma. -->
+    <!-- Al passaggio del mouse il nome si ingrandisce; al click diventa MANU (e torna al secondo click). -->
+    <div class="name-block" data-name>
+      <button class="name-toggle sr-only" type="button" aria-pressed="false" data-name-toggle>Chiamami Manu</button>
+      <p class="hero-hi accent">Hi, I’m</p>
+      <h1 class="hero-name">
+        <span class="name-line">
+          <span class="hero-first">Emanuele</span>
+          <span class="hero-role accent">Videomaker<br>and Photographer</span>
+        </span>
+        <span class="hero-last">Lombardi</span>
+      </h1>
+    </div>
+
+    <div class="hero-bar">
+      <a class="scroll-cue" href="#lavori">
+        <svg viewBox="0 0 10 14" aria-hidden="true"><path d="M5 0v12.5M.8 8.5L5 12.7l4.2-4.2" fill="none" stroke="currentColor" stroke-width="1.1"/></svg>
+        Scroll
+      </a>
+      <p class="based">Based in Napoli, Italy<span class="based-sep"> — </span><br class="based-br">Working worldwide</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LAVORI ============ -->
+<section class="section" id="lavori" aria-labelledby="t-lavori">
+  <div class="section-head">
+    <span class="lead accent">I miei ultimi</span>
+    <h2 class="word" id="t-lavori">Lavori</h2>
+  </div>
+
+  <!-- Filtri: mostrano tutti i lavori, solo i video o solo le foto -->
+  <div class="chips pile-filter" role="radiogroup" aria-label="Filtra i lavori">
+    <label class="chip"><input type="radio" name="filtro" value="all" checked><span>Tutti</span></label>
+    <label class="chip"><input type="radio" name="filtro" value="video"><span>Video</span></label>
+    <label class="chip"><input type="radio" name="filtro" value="photo"><span>Foto</span></label>
+  </div>
+
+  <!-- GRIGLIA DI LAVORI (foto e video insieme, ispirata a brunosuraski.com)
+       4 colonne su desktop, 2 su mobile; ogni card tiene il suo formato e si incastra da sola.
+       L'ordine qui sotto è l'ordine della griglia (dall'alto).
+       Video orizzontale 16:9 (largo 2 colonne):
+         <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/…" data-preview="assets/lavori/01-preview.mp4" aria-label="Guarda: Nome progetto"><img src="assets/lavori/01.jpg" alt="Nome progetto"></button>
+       Video verticale 9:16 (largo 1 colonna): aggiungi tile--vertical alla classe.
+       Foto 3:4 (larga 1 colonna):
+         <button class="tile tile--photo" type="button" data-kind="photo" aria-label="Guarda la foto"><img src="assets/lavori/foto-01.jpg" alt="Descrizione"></button>
+       Altri formati: style="aspect-ratio: 3 / 2". Larghezza diversa: data-span="1" o "2". -->
+  <div class="pile" data-pile>
+      <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/1244368462" data-preview="assets/lavori/mrfrank.mp4" aria-label="Guarda: Mr Frank"><img src="assets/lavori/mrfrank.jpg" alt="Mr Frank" loading="lazy" decoding="async"></button>
+      <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/1244371532" data-preview="assets/lavori/officina-sartoriale.mp4" aria-label="Guarda: Officina Sartoriale"><img src="assets/lavori/officina-sartoriale.jpg" alt="Officina Sartoriale" loading="lazy" decoding="async"></button>
+      <button class="tile tile--photo" type="button" data-kind="photo" style="aspect-ratio: 2 / 3" aria-label="Guarda la foto: Colazione a bordo campo allo stadio"><img src="assets/lavori/foto-dctraining-stadio.jpg" alt="Colazione a bordo campo allo stadio" loading="lazy" decoding="async"></button>
+      <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/1244363686" data-preview="assets/lavori/anastasio.mp4" style="aspect-ratio: 4 / 3" aria-label="Guarda: Anastasio"><img src="assets/lavori/anastasio.jpg" alt="Anastasio" loading="lazy" decoding="async"></button>
+      <button class="tile tile--photo" type="button" data-kind="photo" style="aspect-ratio: 2 / 3" aria-label="Guarda la foto: Pizza margherita con due calici di vino"><img src="assets/lavori/foto-pizza.jpg" alt="Pizza margherita con due calici di vino" loading="lazy" decoding="async"></button>
+      <button class="tile tile--video tile--vertical" type="button" data-kind="video" data-video="https://vimeo.com/1244371741" data-preview="assets/lavori/alaia-gallo.mp4" aria-label="Guarda: Alaia e Gallo"><img src="assets/lavori/alaia-gallo.jpg" alt="Alaia e Gallo" loading="lazy" decoding="async"></button>
+      <button class="tile tile--photo" type="button" data-kind="photo" style="aspect-ratio: 16 / 9" aria-label="Guarda la foto: Barca vista dall'alto con il drone"><img src="assets/lavori/foto-barca-drone.jpg" alt="Barca vista dall'alto con il drone" loading="lazy" decoding="async"></button>
+      <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/1224119019" data-preview="assets/lavori/umberto-rossella.mp4" aria-label="Guarda: Umberto e Rossella"><img src="assets/lavori/umberto-rossella.jpg" alt="Umberto e Rossella" loading="lazy" decoding="async"></button>
+      <button class="tile tile--photo" type="button" data-kind="photo" style="aspect-ratio: 4 / 5" aria-label="Guarda la foto: Crudi di pesce su un piatto bianco"><img src="assets/lavori/foto-colmare.jpg" alt="Crudi di pesce su un piatto bianco" loading="lazy" decoding="async"></button>
+      <button class="tile tile--video tile--vertical" type="button" data-kind="video" data-video="https://vimeo.com/1244372300" data-preview="assets/lavori/stufe-primavera.mp4" aria-label="Guarda: Stufe Primavera"><img src="assets/lavori/stufe-primavera.jpg" alt="Stufe Primavera" loading="lazy" decoding="async"></button>
+      <button class="tile tile--photo" type="button" data-kind="photo" style="aspect-ratio: 2 / 3" aria-label="Guarda la foto: Evento sportivo allo stadio Maradona"><img src="assets/lavori/foto-dctraining.jpg" alt="Evento sportivo allo stadio Maradona" loading="lazy" decoding="async"></button>
+      <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/1226405523" data-preview="assets/lavori/naufraghi.mp4" aria-label="Guarda: Naufraghi"><img src="assets/lavori/naufraghi.jpg" alt="Naufraghi" loading="lazy" decoding="async"></button>
+    </div>
+</section>
+
+<!-- ============ CHI SONO ============ -->
+<section class="section" id="chi-sono" aria-labelledby="t-chi">
+  <div class="section-head">
+    <span class="lead accent">Ciao, sono</span>
+    <h2 class="word" id="t-chi">Manu</h2>
+  </div>
+
+  <div class="about">
+    <!-- Ritratto 4:5: <figure class="portrait tile"><img src="assets/ritratto.jpg" alt="Emanuele Lombardi"></figure> -->
+    <figure class="portrait tile"><img src="assets/ritratto.jpg" alt="Emanuele Lombardi, ritratto" loading="lazy" decoding="async"></figure>
+    <div class="bio">
+      <ul class="pills" aria-label="Competenze">
+        <li>Videomaker</li><li>Photographer</li><li>Drone pilot</li><li>Graphic designer</li>
+      </ul>
+      <p class="bio-lead">Ho sempre guardato il mondo cercando storie da raccontare. La mia passione oggi è diventata il mio mestiere.</p>
+      <p class="bio-text">Ho iniziato con una camera in mano e un canale YouTube, girando video per il puro gusto di raccontare e imparando sbaglio dopo sbaglio. Poi sono arrivati i primi eventi, i primi clienti, e la voglia di dare voce alle storie degli altri. Oggi come allora, la cosa che mi entusiasma di più è la stessa: entrare in un mondo che non conosco, ascoltare chi lo vive e trovare le immagini giuste per mostrarlo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCATTI (in viaggio) ============
+     All'inizio le foto 2:3 sono un mazzo al centro (come quello dell'apertura); scorrendo il mazzo
+     si apre, le foto vanno al loro posto attorno alla frase e la frase compare (funzione "travel" in js/main.js).
+     Ogni foto: --x / --y = posizione finale in % (desktop), --w = larghezza (px a 1440), --r = rotazione in gradi;
+     --mx / --my / --mw / --mr = le stesse cose su mobile. L'ultima foto è quella davanti nel mazzo. Per metterci la foto:
+     <button class="tile tile--travel" … style="…"><img src="assets/scatti/01.jpg" alt="Descrizione"></button> -->
+<section class="section travel" id="scatti" aria-labelledby="t-scatti">
+  <div class="section-head travel-line"></div>
+  <div class="travel-track" data-travel-track>
+    <div class="travel-stage" data-travel>
+      <h2 class="travel-title" id="t-scatti" aria-label="Porto sempre una camera con me">
+        <span class="lead accent">Porto sempre una camera</span> <span class="word">con me</span>
+      </h2>
+        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:-2;--y:7;--w:220;--r:-12;--mx:-6;--my:1;--mw:112;--mr:-10"><img src="assets/scatti/01.jpg" alt="Gigli arancioni davanti a una casa di campagna" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:21;--y:1;--w:150;--r:6;--mx:22;--my:8;--mw:100;--mr:7"><img src="assets/scatti/02.jpg" alt="Scala a chiocciola vista dall'alto" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:66;--y:3;--w:140;--r:-6;--mx:50;--my:0;--mw:104;--mr:-6"><img src="assets/scatti/03.jpg" alt="Tronchi tagliati in un bosco" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:84;--y:5;--w:210;--r:10;--mx:76;--my:7;--mw:112;--mr:9"><img src="assets/scatti/04.jpg" alt="Gatto bianco e nero dietro un cancello" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:-1;--y:60;--w:200;--r:8;--mx:-5;--my:68;--mw:110;--mr:8"><img src="assets/scatti/05.jpg" alt="Cane che dorme sulla sabbia in spiaggia" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:19;--y:73;--w:170;--r:-7;--mx:23;--my:76;--mw:100;--mr:-7"><img src="assets/scatti/06.jpg" alt="Margherite in un movimento circolare" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:62;--y:75;--w:180;--r:5;--mx:51;--my:70;--mw:104;--mr:5"><img src="assets/scatti/07.jpg" alt="Vicolo di un borgo visto da sotto un arco" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:85;--y:55;--w:220;--r:-9;--mx:77;--my:77;--mw:110;--mr:-9"><img src="assets/scatti/08.jpg" alt="Sala di lettura con la cupola di vetro" loading="lazy" decoding="async"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVIZI ============ -->
+<section class="section" id="servizi" aria-labelledby="t-servizi">
+  <div class="section-head">
+    <span class="lead accent">I miei</span>
+    <h2 class="word" id="t-servizi">Servizi</h2>
+  </div>
+
+  <ul class="services">
+    <li><h3>Regia</h3><p>Una visione unica dal concept al montaggio finale: racconto, ritmo e scelte creative tenute insieme dall’inizio alla fine.</p></li>
+    <li><h3>Direzione della fotografia · DOP</h3><p>Camera, ottiche e luce al servizio dell’inquadratura giusta, sul set o in location.</p></li>
+    <li><h3>Fotografia</h3><p>Lo stesso sguardo cinematografico negli scatti: campagne, ritratti, prodotto, food e architettura.</p></li>
+    <li><h3>Produzione video</h3><p>Commercial, brand film e contenuti social, seguiti dal brief alla consegna con una troupe affidabile.</p></li>
+    <li><h3>Montaggio e color</h3><p>Il taglio e il colore: dove ritmo, suono e tono trasformano il girato in racconto.</p></li>
+    <li><h3>Riprese aeree</h3><p>Drone con pilota patentato, per dare respiro e scala a location, architetture e territorio.</p></li>
+  </ul>
+
+  <div class="sectors">
+    <ul class="pills" aria-label="Settori">
+      <li>Pubblicità e commercial</li><li>Video per brand</li><li>Food &amp; wine</li><li>Eventi</li>
+      <li>Architettura e interni</li><li>Hospitality</li><li>Nautica e yacht</li><li>Corporate</li>
+      <li>Moda</li><li>Automotive</li><li>Social content</li><li>Arte e cultura</li>
+      <li>Real estate</li><li>Beauty</li><li>Benessere</li><li>Videoclip musicali</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ CONTATTI ============ -->
+<section class="section section--contact" id="contatti" aria-labelledby="t-contatti">
+  <div class="section-head">
+    <span class="lead accent">Parlami del tuo</span>
+    <h2 class="word" id="t-contatti">Progetto</h2>
+  </div>
+
+  <!-- FORM collegato a Formspree (account: manu.ally1307@gmail.com) -->
+  <form class="form" action="https://formspree.io/f/xqppjwrg" method="POST" data-form novalidate>
+    <div class="field">
+      <label class="sr-only" for="f-nome">Nome e cognome</label>
+      <input id="f-nome" name="nome" type="text" autocomplete="name" placeholder="Nome e cognome" required>
+    </div>
+    <div class="field">
+      <label class="sr-only" for="f-email">Email</label>
+      <input id="f-email" name="email" type="email" autocomplete="email" placeholder="Email" required>
+    </div>
+    <div class="field">
+      <label class="sr-only" for="f-azienda">Azienda (facoltativo)</label>
+      <input id="f-azienda" name="azienda" type="text" autocomplete="organization" placeholder="Azienda (facoltativo)">
+    </div>
+    <div class="field">
+      <label class="sr-only" for="f-tel">Telefono (facoltativo)</label>
+      <input id="f-tel" name="telefono" type="tel" autocomplete="tel" placeholder="Telefono (facoltativo)">
+    </div>
+
+    <fieldset class="field field--full choices">
+      <legend>Tipo di progetto</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="tipo" value="Commercial" checked><span>Commercial</span></label>
+        <label class="chip"><input type="radio" name="tipo" value="Evento"><span>Evento</span></label>
+        <label class="chip"><input type="radio" name="tipo" value="Brand film"><span>Brand film</span></label>
+        <label class="chip"><input type="radio" name="tipo" value="Social"><span>Social</span></label>
+        <label class="chip"><input type="radio" name="tipo" value="Fotografia"><span>Fotografia</span></label>
+        <label class="chip"><input type="radio" name="tipo" value="Altro"><span>Altro</span></label>
+      </div>
+    </fieldset>
+
+    <div class="field field--full">
+      <label class="sr-only" for="f-msg">Raccontami il tuo progetto</label>
+      <textarea id="f-msg" name="messaggio" rows="1" placeholder="Raccontami il tuo progetto" required></textarea>
+    </div>
+
+    <input type="text" name="_gotcha" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <!-- Oggetto dell'email che ricevi da Formspree -->
+    <input type="hidden" name="_subject" value="Nuova richiesta dal sito">
+
+    <div class="form-end field--full">
+      <label class="check">
+        <input type="checkbox" name="privacy" required>
+        <span class="box" aria-hidden="true"></span>
+        <span>Ho letto e accetto la <a href="privacy.html">privacy policy</a></span>
+      </label>
+      <button class="button" type="submit"><span data-button-label>Invia richiesta</span><svg viewBox="0 0 13 10" aria-hidden="true"><path d="M.5 5H12M8 .8L12.2 5 8 9.2" fill="none" stroke="currentColor" stroke-width="1.1"/></svg></button>
+    </div>
+    <p class="form-status" role="status" aria-live="polite" data-form-status></p>
+  </form>
+
+  <a class="big-mail" href="mailto:manu.ally1307@gmail.com">manu.ally1307@gmail.com</a>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-name">
+          <svg viewBox="0 0 5 5" aria-hidden="true"><path d="M0 0h1v1H0zM4 0h1v1H4zM1 1h1v1H1zM3 1h1v1H3zM0 2h2v1H0zM3 2h2v1H3zM1 3h1v1H1zM3 3h1v1H3zM0 4h1v1H0zM4 4h1v1H4z"/></svg>
+          <span>Emanuele Lombardi</span>
+        </div>
+        <p class="label">Videomaker and Photographer</p>
+      </div>
+      <nav class="footer-col" aria-label="Menu">
+        <p class="label">Menu</p>
+        <a href="#top">Home</a><a href="#lavori">Lavori</a><a href="#chi-sono">Chi sono</a><a href="#scatti">Scatti</a><a href="#servizi">Servizi</a><a href="#contatti">Contatti</a>
+      </nav>
+      <nav class="footer-col" aria-label="Social">
+        <p class="label">Social</p>
+        <a href="https://www.instagram.com/manu.ally_/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.linkedin.com/in/emanuele-lombardi-b5b834250/" target="_blank" rel="noopener">LinkedIn</a>
+      </nav>
+      <div class="footer-col">
+        <p class="label">Contatti</p>
+        <a href="mailto:manu.ally1307@gmail.com" class="footer-mail">manu.ally1307@gmail.com</a>
+        <a href="#contatti">Inizia un progetto</a>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <p>©<span data-year>2026</span> Emanuele Lombardi · P.IVA 10847661211</p>
+      <p class="signature"><span class="accent">Designed by</span> me</p>
+      <p>Napoli, Italia · Disponibile in tutto il mondo</p>
+    </div>
+  </footer>
+</section>
+
+</main>
+
+<!-- Finestra video -->
+<div class="lightbox" hidden data-lightbox>
+  <button class="lightbox-close" type="button" data-lightbox-close>Chiudi</button>
+  <div class="lightbox-frame" data-lightbox-frame></div>
+</div>
+
+<script src="js/main.js" defer></script>
+</body>
+</html>
