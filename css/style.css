@@ -261,36 +261,6 @@ ul { padding: 0; list-style: none; }
 .menu-top { display: flex; justify-content: space-between; align-items: center; }
 .menu-top .menu-toggle { display: block; }
 
-/* Riquadro "Un ricordo dall'ultimo SET" nel menu mobile: corsivo + maiuscolo sulla stessa linea,
-   sotto una foto quadrata con bordo bianco. Il lato si adatta all'altezza dello schermo,
-   così il riquadro e i link stanno sempre insieme senza scorrere. */
-.menu-memory {
-  --side: min(50vw, 24svh);              /* lato del quadrato (più piccolo su richiesta) */
-  width: var(--side);
-  margin: 24px 0 28px;
-}
-/* La scritta è larga quanto il quadrato: il corsivo parte dal bordo sinistro,
-   "SET" finisce sul bordo destro. La dimensione del testo segue il lato del quadrato. */
-.menu-memory figcaption {
-  display: flex;
-  justify-content: space-between;
-  align-items: last baseline;
-  margin-bottom: 10px;
-  font-size: calc(var(--side) / 11.9);
-  line-height: 1;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.menu-memory figcaption .accent { text-transform: none; letter-spacing: 0.01em; font-size: 1.08em; }
-.menu-memory img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border: 2px solid var(--white);
-  background: var(--tile);
-}
-
 .menu-links {
   display: flex;
   flex-direction: column;

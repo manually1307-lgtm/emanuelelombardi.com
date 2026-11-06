@@ -68,7 +68,7 @@ document.querySelectorAll('[data-year]').forEach(el => { el.textContent = new Da
   // su iPhone i bordi sono di Safari e lo swipe verso il basso fa scorrere la pagina.)
   const calm = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const EASE_OUT = 'cubic-bezier(.2, .8, .2, 1)';
-  const items = () => [...menuEl.querySelectorAll('.menu-memory, .menu-links a, .menu-bottom')];
+  const items = () => [...menuEl.querySelectorAll('.menu-links a, .menu-bottom')];
   let anim = null;
   let shown = false;
 
