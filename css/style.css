@@ -617,9 +617,28 @@ button.tile:hover img { transform: scale(1.03); }
   transition: opacity .4s ease;
 }
 
-/* Al passaggio del mouse le altre card si attenuano */
+/* Didascalia sotto ogni card: nome del brand/evento a sinistra (Neue Haas, maiuscolo),
+   tipo di lavoro a destra (EB Garamond corsivo), sulla stessa linea di base; sotto una linea sottile. */
+.tile-cap {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0;
+  padding: 12px 0 10px;
+  border-bottom: 1px solid var(--line);
+  line-height: 1.2;
+  transition: opacity .4s ease;
+}
+.cap-name { font-size: 13px; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; }
+.cap-type { font-size: 17px; color: var(--gray); text-align: right; white-space: nowrap; }
+.pile .tile-cap[hidden] { display: none; }
+.pile.is-piled .tile-cap { position: absolute; top: 0; left: 0; }
+
+/* Al passaggio del mouse le altre card (e le loro didascalie) si attenuano */
 @media (hover: hover) and (pointer: fine) {
-  .pile:has(.tile:hover) .tile:not(:hover) { opacity: .35; }
+  .pile:has(.tile:hover) .tile:not(:hover),
+  .pile:has(.tile:hover) .tile:not(:hover) + .tile-cap { opacity: .35; }
 }
 
 /* Riquadri ancora senza immagine: bordo sottile, per vedere la griglia */
@@ -627,6 +646,10 @@ button.tile:hover img { transform: scale(1.03); }
 
 @media (max-width: 820px) {
   .pile { --pile-gap: 12px; grid-template-columns: repeat(2, 1fr); }
+  /* su telefono le card strette non hanno spazio per due colonne di testo: nome sopra, tipo sotto */
+  .tile-cap { flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 0 8px; }
+  .cap-name { font-size: 12px; }
+  .cap-type { font-size: 15px; text-align: left; white-space: normal; }
   .pile-filter { margin-bottom: 24px; }
 }
 
@@ -1212,7 +1235,7 @@ button.tile:hover video { transform: scale(1.03); }
 @media (prefers-reduced-motion: no-preference) {
   .js :is(
     .site-header, .reel-stack, .hero-hi, .hero-first, .hero-last, .hero-role, .hero-bar,
-    .section-head .lead, .word, .section .tile, .controls,
+    .section-head .lead, .word, .section .tile, .tile-cap, .controls,
     .pills li, .bio-lead, .bio-text, .services li, .sectors .label,
     .form .field, .form-end, .big-mail, .footer-top > *, .footer-legal
   ):not(.is-in) { opacity: 0; }

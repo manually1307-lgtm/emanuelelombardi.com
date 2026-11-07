@@ -505,8 +505,13 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
     return m ? m[1] / m[2] : 16 / 9;
   };
 
-  // Le proporzioni si leggono una volta sola, prima che la griglia cambi lo stile delle card
-  cards.forEach(c => { c._ratio = ratioOf(c); });
+  // Le proporzioni si leggono una volta sola, prima che la griglia cambi lo stile delle card.
+  // La didascalia (p.tile-cap) è l'elemento subito dopo la card: si sposta insieme a lei.
+  cards.forEach(c => {
+    c._ratio = ratioOf(c);
+    const n = c.nextElementSibling;
+    c._cap = n && n.classList.contains('tile-cap') ? n : null;
+  });
   pileEl.classList.add('is-piled');
 
   const layout = () => {
@@ -537,8 +542,14 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
       const span = spanOf(c);
       const { best, bestY } = spot(span);
       const w = colW * span + gap * (span - 1), h = w / c._ratio;
-      Object.assign(c.style, { left: best * (colW + gap) + 'px', top: bestY + 'px', width: w + 'px', height: h + 'px' });
-      for (let i = best; i < best + span; i++) heights[i] = bestY + h + gap;
+      const x = best * (colW + gap);
+      Object.assign(c.style, { left: x + 'px', top: bestY + 'px', width: w + 'px', height: h + 'px' });
+      let capH = 0;
+      if (c._cap) {
+        Object.assign(c._cap.style, { left: x + 'px', top: (bestY + h) + 'px', width: w + 'px' });
+        capH = c._cap.offsetHeight;
+      }
+      for (let i = best; i < best + span; i++) heights[i] = bestY + h + capH + gap;
     }
     pileEl.style.height = Math.max(0, Math.max(...heights) - gap) + 'px';
   };
@@ -548,11 +559,13 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   filter && filter.addEventListener('change', e => {
     const v = e.target.value;
     const apply = () => {
-      cards.forEach(c => { c.hidden = v !== 'all' && c.dataset.kind !== v; });
+      cards.forEach(c => { c.hidden = v !== 'all' && c.dataset.kind !== v; if (c._cap) c._cap.hidden = c.hidden; });
       layout();
       pileEl.style.opacity = '';
       if (reduce) return;
       cards.filter(c => !c.hidden).forEach((c, i) => {
+        if (c._cap) c._cap.animate([{ opacity: 0, translate: '0 40px' }, { opacity: 1, translate: '0 0' }],
+          { duration: 600, delay: i * 45, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
         c.animate([{ opacity: 0, translate: '0 40px' }, { opacity: 1, translate: '0 0' }],
           { duration: 600, delay: i * 45, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
       });
@@ -999,7 +1012,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   const show = el => el.classList.add('is-in');
 
   if (calm) {
-    document.querySelectorAll('.section-head, .word, .tile, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .big-mail, .footer-top > *, .footer-legal, .site-header, .reel-stack, .hero-hi, .hero-first, .hero-last, .hero-role, .hero-bar, .section-head .lead').forEach(show);
+    document.querySelectorAll('.section-head, .word, .tile, .tile-cap, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .big-mail, .footer-top > *, .footer-legal, .site-header, .reel-stack, .hero-hi, .hero-first, .hero-last, .hero-role, .hero-bar, .section-head .lead').forEach(show);
     return;
   }
 
@@ -1046,7 +1059,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
 
   // ---- Resto della pagina, allo scorrimento ----
   const heads = [...document.querySelectorAll('.section-head')];
-  const items = [...document.querySelectorAll('.tile, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .big-mail, .footer-top > *, .footer-legal')]
+  const items = [...document.querySelectorAll('.tile, .tile-cap, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .big-mail, .footer-top > *, .footer-legal')]
     .filter(el => !el.closest('.hero') && !el.closest('[data-travel]')); // gli Scatti si animano da soli (travel)
 
   const io = new IntersectionObserver(entries => {
