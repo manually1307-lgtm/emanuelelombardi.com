@@ -681,6 +681,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
 (function lightbox() {
   const box = document.querySelector('[data-lightbox]');
   const frame = document.querySelector('[data-lightbox-frame]');
+  const info = document.querySelector('[data-lightbox-info]');
   const closeBtn = document.querySelector('[data-lightbox-close]');
   if (!box || !frame) return;
   let lastFocus = null;
@@ -697,8 +698,24 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
     return null;
   };
 
+  // Scheda del lavoro: didascalia (nome / tipo) + .work-info che seguono la card nell'HTML
+  let currentCard = null;
+  const fillInfo = card => {
+    const cap = card && card.nextElementSibling && card.nextElementSibling.classList.contains('tile-cap') ? card.nextElementSibling : null;
+    const extra = cap && cap.nextElementSibling && cap.nextElementSibling.classList.contains('work-info') ? cap.nextElementSibling : null;
+    if (!info) return;
+    if (!extra) { info.hidden = true; info.innerHTML = ''; box.classList.remove('has-info'); frame.style.removeProperty('--info-h'); return; }
+    info.innerHTML = `<p class="tile-cap is-in">${cap.innerHTML}</p>` + extra.innerHTML;   // is-in: già "comparsa", niente animazione
+    info.hidden = false;
+    box.classList.add('has-info');
+    // il video si rimpicciolisce quanto serve perché video + scheda stiano nello schermo
+    requestAnimationFrame(() => frame.style.setProperty('--info-h', Math.min(info.offsetHeight, window.innerHeight * 0.4) + 'px'));
+  };
+
   const show = (html, mode, ratio) => {
     lastFocus = document.activeElement;
+    fillInfo(currentCard);
+    currentCard = null;
     if (ratio) frame.style.setProperty('--ar', ratio); else frame.style.removeProperty('--ar');
     openedByPointer = byPointer;
     frame.innerHTML = html;
@@ -712,6 +729,9 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   const close = () => {
     box.hidden = true;
     frame.innerHTML = '';
+    if (info) { info.hidden = true; info.innerHTML = ''; }
+    box.classList.remove('has-info');
+    frame.style.removeProperty('--info-h');
     document.body.classList.remove('no-scroll');
     if (openedByPointer) document.activeElement && document.activeElement.blur();
     else if (lastFocus) lastFocus.focus();
@@ -732,6 +752,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
 
   document.querySelectorAll('[data-video]').forEach(el => {
     el.addEventListener('click', () => {
+      currentCard = el;
       const url = el.dataset.video.trim();
       if (url) openVideo(url, el.classList.contains('tile--vertical'), el.style.aspectRatio || null);
     });
@@ -743,6 +764,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
       const img = el.querySelector('img');
       const src = el.dataset.full || (img && (img.currentSrc || img.src));
       if (!src) return;
+      currentCard = el;
       const im = document.createElement('img');
       im.src = src;
       im.alt = img ? img.alt : '';
