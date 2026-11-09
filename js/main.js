@@ -559,7 +559,8 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   filter && filter.addEventListener('change', e => {
     const v = e.target.value;
     const apply = () => {
-      cards.forEach(c => { c.hidden = v !== 'all' && c.dataset.kind !== v; if (c._cap) c._cap.hidden = c.hidden; });
+      cards.forEach(c => { c.hidden = v !== 'all' && !c.dataset.kind.split(' ').includes(v);   // data-kind="photo video": compare in tutti e due i filtri
+       if (c._cap) c._cap.hidden = c.hidden; });
       layout();
       pileEl.style.opacity = '';
       if (reduce) return;
@@ -738,6 +739,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
 
   const hide = () => {
     box.hidden = true;
+    track.querySelectorAll('.viewer-video').forEach(v => { v.innerHTML = ''; });   // ferma il video
     frame.innerHTML = '';
     if (info) { info.hidden = true; info.innerHTML = ''; }
     box.classList.remove('has-info');
@@ -850,13 +852,14 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
     const mob = window.matchMedia('(max-width: 820px)').matches;
     step = mob ? 8 : 12;
     const W = grid.clientWidth;
-    const H = mob ? Math.max(320, Math.min(440, window.innerHeight - 400)) : Math.max(380, Math.min(580, window.innerHeight - 440));   // il mazzo sta tutto nello schermo
+    const top = grid.getBoundingClientRect().top + window.scrollY;   // spazio sotto il titolo (che può andare su due righe)
+    const H = mob ? Math.max(300, Math.min(440, window.innerHeight - top - 130)) : Math.max(340, Math.min(580, window.innerHeight - top - 90));   // il mazzo sta tutto nello schermo
     const ratios = items.map(el => el.style.aspectRatio.split('/').map(Number));
     const mixed = ratios.some(([w, h]) => w > h) && ratios.some(([w, h]) => w <= h);
     sizes = items.map(el => {
       const [aw, ah] = el.style.aspectRatio.split('/').map(Number);
       let w = H * aw / ah, h = H;
-      const maxW = W - step * SHOW - 8;
+      const maxW = W - step * SHOW - 8 - (mob ? 0 : 2 * 170);   // su computer resta spazio ai lati per contatore e frecce
       if (aw > ah && mixed) w = H * 1.1;            // tra foto verticali, quelle orizzontali più piccole: non coprono il mazzo
       if (w > maxW) w = maxW;
       h = w * ah / aw;
@@ -864,7 +867,8 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
       el.style.height = h + 'px';
       return { w, h };
     });
-    grid.style.height = Math.max(...sizes.map(z => z.h)) + step * SHOW + 'px';   // alto quanto la foto più alta
+    grid.style.height = Math.max(...sizes.map(z => z.h)) + step * SHOW + 24 + 'px';   // alto quanto la foto più alta (+ margine per le rotazioni)
+    grid.style.setProperty('--deck-shift', step * SHOW / 2 + 'px');                   // il mazzo sale verso destra: si ricentra
   };
 
   const depthOf = i => (i - front + n) % n;
@@ -915,12 +919,26 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
     ], { duration: 750, easing: EASE }).finished.then(() => { el.style.transition = ''; }).catch(() => {});
   };
 
+  // carta video: clip muta in loop sopra la copertina
+  items.filter(el => el.dataset.preview).forEach(el => {
+    if (calm) return;
+    const v = document.createElement('video');
+    v.muted = true; v.defaultMuted = true; v.loop = true; v.playsInline = true; v.autoplay = true;
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
+    v.src = el.dataset.preview;
+    v.addEventListener('playing', () => el.classList.add('is-playing'));
+    el.insertBefore(v, el.querySelector('.play-icon'));
+    const p = v.play(); if (p && p.catch) p.catch(() => {});
+  });
+
   measure();
   place(false);
   grid.classList.add('is-ready');
   if (!calm) grid.animate([{ opacity: 0, translate: '0 40px' }, { opacity: 1, translate: '0 0' }], { duration: 1000, delay: 300, easing: EASE, fill: 'backwards' });
   let rt;
   window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { measure(); place(false); }, 120); });
+  // quando arrivano i font il titolo può andare a capo: si rimisura lo spazio
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); place(false); });
 
   btnNext.addEventListener('click', deckNext);
   btnPrev.addEventListener('click', () => deckPrev());
@@ -968,6 +986,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   const closeBtn = box.querySelector('[data-viewer-close]');
   track.innerHTML = items.map(el => {
     const img = el.querySelector('img');
+    if (el.dataset.embed) return `<figure class="viewer-slide viewer-slide--video"><div class="viewer-video" data-embed="${el.dataset.embed}"></div></figure>`;
     return `<figure class="viewer-slide"><img src="${el.dataset.full}" alt="${img.alt.replace(/"/g, '&quot;')}" loading="lazy" decoding="async" draggable="false"></figure>`;
   }).join('');
   const slides = [...track.children];
@@ -981,7 +1000,14 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
     prev.disabled = index === 0;
     next.disabled = index === items.length - 1;
     // carica subito la foto aperta e le vicine
-    [index - 1, index, index + 1].forEach(n => slides[n] && slides[n].querySelector('img').setAttribute('loading', 'eager'));
+    [index - 1, index, index + 1].forEach(n => { const im = slides[n] && slides[n].querySelector('img'); if (im) im.setAttribute('loading', 'eager'); });
+    // video: parte quando la sua slide è quella aperta, si ferma (e si scarica) quando si cambia
+    slides.forEach((sl, n) => {
+      const box = sl.querySelector('.viewer-video');
+      if (!box) return;
+      if (n === index && !box.firstChild) box.innerHTML = `<iframe src="${box.dataset.embed}?autoplay=1&dnt=1" title="Video" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+      if (n !== index) box.innerHTML = '';
+    });
   };
   const open = i => {
     lastFocus = document.activeElement;
@@ -994,6 +1020,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   };
   const hide = () => {
     box.hidden = true;
+    track.querySelectorAll('.viewer-video').forEach(v => { v.innerHTML = ''; });   // ferma il video
     document.body.classList.remove('no-scroll');
     if (front !== index) { front = index; place(false); }   // il mazzo resta sull'ultima foto vista
     lastFocus = items[front];
