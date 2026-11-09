@@ -305,7 +305,7 @@ ul { padding: 0; list-style: none; }
 }
 
 button.tile { cursor: pointer; }
-button.tile:hover img { transform: scale(1.03); }
+:is(button, a).tile:hover img { transform: scale(1.03); }
 
 .tile--video { aspect-ratio: 16 / 9; }
 .tile--vertical { aspect-ratio: 9 / 16; }
@@ -1183,7 +1183,7 @@ button.tile:hover img { transform: scale(1.03); }
 }
 .tile--video.is-playing video { opacity: 1; }
 .tile--video video { transition: opacity .4s ease, transform .8s cubic-bezier(.2, .7, .2, 1); }
-button.tile:hover video { transform: scale(1.03); }
+:is(button, a).tile:hover video { transform: scale(1.03); }
 
 @media (prefers-reduced-motion: reduce) {
   .deck-card { transition: none; }
@@ -1316,3 +1316,220 @@ button.tile:hover video { transform: scale(1.03); }
 .intro-screen.is-flapping .frame--closed { animation: sprite-closed .72s steps(1, end); }
 @media (max-width: 820px) { .intro-screen svg { width: 64px; height: 64px; } }
 
+.word .wd { display: inline-block; white-space: nowrap; } /* lettere di una parola sempre unite */
+
+/* ---------- Pagine dei lavori (lavori/<nome>/, create da .claude/genera-lavori.py) ----------
+   In alto: percorso, tipo di lavoro (corsivo) + nome (parola grande), video, frase e dettagli.
+   Poi "Altri lavori", il riquadro del servizio con il bottone e il footer. */
+.work-hero { padding-top: 140px; }
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: -16px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+.crumbs a { transition: color .2s ease; }
+.crumbs a:hover, .crumbs [aria-current] { color: var(--white); }
+.work-hero .word { text-align: right; }
+
+.work-main { display: flex; flex-direction: column; gap: var(--gap); }
+.work-player {
+  width: min(100%, calc(82svh * var(--arn, 1.7778)));
+  align-self: center;
+  cursor: pointer;
+}
+.work-player video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0; transition: opacity .4s ease; pointer-events: none;
+}
+.work-player.is-playing video { opacity: 1; }
+.work-player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.work-player .play {
+  position: absolute;
+  left: 50%; top: 50%;
+  translate: -50% -50%;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--white);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, .5);
+}
+.play-icon {
+  display: grid; place-items: center;
+  width: 72px; height: 72px;
+  border: 1px solid var(--white);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .25);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background-color .25s ease, color .25s ease;
+}
+.play-icon svg { width: 14px; height: 16px; margin-left: 3px; }
+.work-player:hover .play-icon { background: var(--white); color: var(--black); }
+.work-player:hover img { transform: scale(1.02); }
+
+.work-body {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 64px;
+  align-items: start;
+}
+.work-details { margin: 0; border-top: 1px solid var(--line); }
+.work-details div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  padding: 12px 0 10px;
+  border-bottom: 1px solid var(--line);
+}
+.work-details dt { font-size: 13px; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; color: var(--gray); }
+.work-details dd { margin: 0; font-size: 16px; text-align: right; }
+
+/* video verticale: video a sinistra, testo a destra allineato al fondo */
+.work-hero--vertical .work-main {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 64px;
+  align-items: end;
+}
+.work-hero--vertical .work-player { width: min(420px, calc(82svh * var(--arn))); }
+.work-hero--vertical .work-body { grid-template-columns: 1fr; gap: 40px; }
+
+.related { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.related-item { display: block; }
+.related-item .tile { aspect-ratio: 4 / 5; }
+.related-item:hover img { transform: scale(1.03); }
+.related-item .tile-cap { display: flex; }
+.related-all { align-self: flex-start; }
+
+.work-cta { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; }
+.work-cta .bio-text { margin: 0; font-size: clamp(18px, 1.67vw, 24px); line-height: 1.4; }
+.work-cta .button { flex: none; }
+
+@media (hover: hover) and (pointer: fine) {
+  .related:has(.related-item:hover) .related-item:not(:hover) { opacity: .4; }
+  .related-item { transition: opacity .4s ease; }
+}
+
+@media (max-width: 820px) {
+  .work-hero { padding-top: 96px; }
+  .crumbs { margin-bottom: -8px; }
+  .work-hero .word { text-align: left; }
+  .work-player { width: 100%; }
+  .play-icon { width: 56px; height: 56px; }
+  .work-body,
+  .work-hero--vertical .work-main { display: flex; flex-direction: column; gap: 28px; align-items: stretch; }
+  .work-hero--vertical .work-player { width: 100%; }
+  .related { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .related-item:nth-child(3) { display: none; }
+  .related-item .cap-type { display: none; }
+  .work-cta { flex-direction: column; align-items: stretch; gap: 28px; }
+}
+
+/* Home: il nome sotto la card porta alla pagina del lavoro; nella finestra del video "Scopri il progetto" */
+a.cap-name { transition: color .2s ease; }
+a.cap-name:hover { color: var(--gray); }
+.work-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 4px;
+  transition: color .2s ease;
+}
+.work-link svg { width: 13px; height: 10px; }
+.work-link:hover { color: var(--gray); }
+
+/* Footer: "Videomaker and Photographer" in corsivo EB Garamond, come nell'apertura */
+.footer-role { margin: 0; font-size: 24px; letter-spacing: 0.03em; line-height: 1.2; color: var(--gray); }
+@media (max-width: 820px) { .footer-role { font-size: 18px; } }
+
+/* ---------- Pagine dei lavori foto: mazzo sfogliabile + carosello (js/main.js, "gallery") ----------
+   Senza JavaScript le foto restano una sotto l'altra. */
+.gallery { display: grid; gap: 12px; }
+.g-item {
+  display: block;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: var(--tile);
+  cursor: pointer;
+}
+.g-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.js .gallery { position: relative; display: block; touch-action: pan-y; }
+.js .gallery:not(.is-ready) { opacity: 0; }
+.js .g-item {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 30px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+  transition: transform .6s cubic-bezier(.2, .8, .2, 1), opacity .4s ease;
+  will-change: transform;
+}
+.js .g-item:not(.is-front) { pointer-events: none; }
+.js .g-item.is-front { cursor: zoom-in; }
+@media (hover: hover) and (pointer: fine) {
+  .js .g-item.is-front:hover img { transform: scale(1.03); }
+  .g-item img { transition: transform .8s cubic-bezier(.2, .7, .2, 1); }
+}
+.gallery-bar { display: flex; justify-content: space-between; align-items: center; }
+/* su computer contatore e frecce stanno ai lati del mazzo, all'altezza del fondo della foto */
+@media (min-width: 821px) {
+  .gallery-bar { position: relative; z-index: 5; margin-top: calc(-56px - var(--gap)); pointer-events: none; }
+  .gallery-bar > * { pointer-events: auto; }
+}
+.no-js .gallery-bar { display: none; }
+.work-hero--photo .work-body { padding-top: 24px; }
+
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  background: var(--black);
+  padding: calc(72px + env(safe-area-inset-top, 0px)) 0 calc(28px + env(safe-area-inset-bottom, 0px));
+}
+.viewer[hidden] { display: none; }
+.viewer-stage { flex: 1; min-height: 0; overflow: hidden; touch-action: pan-y; cursor: grab; }
+.viewer-stage:active { cursor: grabbing; }
+.viewer-track { display: flex; height: 100%; will-change: transform; }
+.viewer-slide {
+  flex: 0 0 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 var(--pad);
+  min-width: 0;
+}
+.viewer-slide img { width: 100%; height: 100%; object-fit: contain; user-select: none; -webkit-user-drag: none; }
+.viewer-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px var(--pad) 0;
+}
+.viewer .counter { font-weight: 400; }
+.arrow--prev svg { transform: rotate(180deg); }
+@media (max-width: 820px) {
+  .viewer { padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
+  .viewer-slide { padding: 0; }
+}

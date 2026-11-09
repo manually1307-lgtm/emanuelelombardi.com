@@ -724,9 +724,19 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
     box.hidden = false;
     document.body.classList.add('no-scroll');
     closeBtn.focus();
+    // il tasto "indietro" del browser/telefono chiude la finestra invece di uscire dal sito
+    if (!(history.state && history.state.lightbox)) history.pushState({ lightbox: true }, '');
   };
 
+  // Chiudi (pulsante, Esc, clic fuori): si torna indietro di un passo nella cronologia,
+  // così la voce aggiunta all'apertura sparisce e "indietro" dopo funziona normalmente.
   const close = () => {
+    if (history.state && history.state.lightbox) history.back();
+    else hide();
+  };
+  window.addEventListener('popstate', () => { if (!box.hidden) hide(); });
+
+  const hide = () => {
     box.hidden = true;
     frame.innerHTML = '';
     if (info) { info.hidden = true; info.innerHTML = ''; }
@@ -750,7 +760,8 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   };
   window.openLightboxVideo = openVideo;   // usata dal mazzo di showreel nell'apertura
 
-  document.querySelectorAll('[data-video]').forEach(el => {
+  // le card video dei Lavori sono link alla pagina del lavoro: si aprono lì, non nella finestra
+  document.querySelectorAll('[data-video]:not(a[href])').forEach(el => {
     el.addEventListener('click', () => {
       currentCard = el;
       const url = el.dataset.video.trim();
@@ -759,7 +770,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   });
 
   // Foto dei lavori: si aprono grandi (data-full per una versione più grande, se c'è)
-  document.querySelectorAll('[data-kind="photo"]').forEach(el => {
+  document.querySelectorAll('[data-kind="photo"]:not(a[href])').forEach(el => {
     el.addEventListener('click', () => {
       const img = el.querySelector('img');
       const src = el.dataset.full || (img && (img.currentSrc || img.src));
@@ -775,6 +786,264 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   closeBtn.addEventListener('click', close);
   box.addEventListener('click', e => { if (e.target === box) close(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !box.hidden) close(); });
+})();
+
+/* ---------- Pagine dei lavori: video ----------
+   Si vede la copertina con la clip muta in loop; al clic al suo posto parte il video completo
+   (Vimeo/YouTube si collegano solo a quel punto, come dice la privacy). */
+(function player() {
+  const box = document.querySelector('[data-player]');
+  if (!box) return;
+  const preview = box.dataset.preview;
+  if (preview && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const v = document.createElement('video');
+    v.muted = true; v.defaultMuted = true; v.loop = true; v.playsInline = true; v.autoplay = true;
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
+    v.src = preview;
+    v.addEventListener('playing', () => box.classList.add('is-playing'));
+    box.insertBefore(v, box.querySelector('.play'));
+    const p = v.play();
+    if (p && p.catch) p.catch(() => {});
+  }
+  const start = () => {
+    const src = box.dataset.player;
+    if (!src || box.classList.contains('is-on')) return;
+    const sep = src.includes('?') ? '&' : '?';
+    const extra = src.includes('vimeo') ? 'autoplay=1&dnt=1' : 'autoplay=1&rel=0';
+    box.classList.add('is-on');
+    box.innerHTML = `<iframe src="${src}${sep}${extra}" title="Video" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+  };
+  box.addEventListener('click', start);
+})();
+
+/* ---------- Pagine dei lavori foto: mazzo sfogliabile + carosello ----------
+   Le foto sono un mazzo (come nell'apertura e negli Scatti). La foto davanti si sfoglia
+   trascinandola (su telefono con lo swipe: elastica, resta ancorata) o con le frecce sotto:
+   a sinistra va in fondo e arriva la successiva, a destra torna davanti quella in fondo.
+   Clic sulla foto davanti = carosello a schermo intero da quella foto; chiudendolo il mazzo
+   resta sull'ultima foto vista. "Indietro" ed Esc chiudono il carosello. */
+(function gallery() {
+  const grid = document.querySelector('[data-gallery]');
+  if (!grid) return;
+  const items = [...grid.querySelectorAll('.g-item')];
+  const n = items.length;
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const EASE = 'cubic-bezier(.2, .8, .2, 1)';
+  const TURN = [-3, 4, -6, 2, -4, 5, -2, 6, -5, 3];   // rotazione di ogni foto nel mazzo
+  const SHOW = 5;                                      // foto visibili dietro quella davanti
+  const ARROW = '<svg viewBox="0 0 13 10" aria-hidden="true"><path d="M.5 5H12M8 .8L12.2 5 8 9.2" fill="none" stroke="currentColor" stroke-width="1.1"/></svg>';
+  const pad = k => String(k).padStart(2, '0');
+  let front = 0, step = 12, sizes = [];
+
+  // contatore e frecce sotto il mazzo
+  const bar = document.createElement('div');
+  bar.className = 'gallery-bar';
+  bar.innerHTML = `<span class="counter"></span><div class="arrows">
+    <button class="arrow arrow--prev" type="button" aria-label="Foto precedente">${ARROW}</button>
+    <button class="arrow" type="button" aria-label="Foto successiva">${ARROW}</button></div>`;
+  grid.after(bar);
+  const counter = bar.querySelector('.counter');
+  const [btnPrev, btnNext] = bar.querySelectorAll('.arrow');
+
+  // misure: tutte le foto alte uguali; quelle larghe si stringono per stare nello schermo
+  const measure = () => {
+    const mob = window.matchMedia('(max-width: 820px)').matches;
+    step = mob ? 8 : 12;
+    const W = grid.clientWidth;
+    const H = mob ? Math.max(320, Math.min(440, window.innerHeight - 400)) : Math.max(380, Math.min(580, window.innerHeight - 440));   // il mazzo sta tutto nello schermo
+    sizes = items.map(el => {
+      const [aw, ah] = el.style.aspectRatio.split('/').map(Number);
+      let w = H * aw / ah, h = H;
+      const maxW = W - step * SHOW - 8;
+      if (aw > ah) w = H * 1.1;                     // foto orizzontali più piccole: non coprono il mazzo
+      if (w > maxW) w = maxW;
+      h = w * ah / aw;
+      el.style.width = w + 'px';
+      el.style.height = h + 'px';
+      return { w, h };
+    });
+    grid.style.height = H + step * SHOW + 'px';
+  };
+
+  const depthOf = i => (i - front + n) % n;
+  const pose = (i, d = depthOf(i)) =>
+    `translate(-50%, -50%) translate(${Math.min(d, SHOW) * step}px, ${-Math.min(d, SHOW) * step}px) rotate(${d === 0 ? TURN[i % TURN.length] * .3 : TURN[i % TURN.length]}deg)`;
+
+  const place = (animate = true) => {
+    items.forEach((el, i) => {
+      const d = depthOf(i);
+      if (!animate) el.style.transition = 'none';
+      el.style.transform = pose(i, d);
+      el.style.zIndex = String(n - d);
+      el.style.opacity = d <= SHOW ? '1' : '0';
+      el.classList.toggle('is-front', d === 0);
+      el.tabIndex = d === 0 ? 0 : -1;
+      el.setAttribute('aria-hidden', d === 0 ? 'false' : 'true');
+      if (!animate) { el.offsetWidth; el.style.transition = ''; }
+    });
+    counter.textContent = `${pad(front + 1)} / ${pad(n)}`;
+  };
+
+  // la foto davanti vola via a sinistra e va in fondo (avanti), o torna dal fondo (indietro)
+  const away = (i, from) => `${from || pose(i, 0)} translateX(${-Math.min(sizes[i].w * 1.05, grid.clientWidth * .55)}px) rotate(-10deg)`;
+  const deckNext = () => {
+    const old = front;
+    const startT = items[old].style.transform;
+    front = (front + 1) % n;
+    place();
+    if (calm) return;
+    const el = items[old];
+    el.style.transition = 'none';
+    el.animate([
+      { transform: startT, zIndex: n + 1, opacity: 1 },
+      { transform: away(old), zIndex: n + 1, opacity: 1, offset: .45 },
+      { transform: pose(old), zIndex: 0, opacity: depthOf(old) <= SHOW ? 1 : 0 },
+    ], { duration: 750, easing: EASE }).finished.then(() => { el.style.transition = ''; }).catch(() => {});
+  };
+  const deckPrev = (startT) => {
+    front = (front - 1 + n) % n;
+    const el = items[front];
+    place();
+    if (calm) return;
+    el.style.transition = 'none';
+    el.animate([
+      { transform: startT ? `${startT}` : pose(front, n - 1), zIndex: startT ? n + 1 : 0, opacity: startT ? 1 : 0 },
+      { transform: away(front), zIndex: n + 1, opacity: 1, offset: .45 },
+      { transform: pose(front, 0), zIndex: n + 1, opacity: 1 },
+    ], { duration: 750, easing: EASE }).finished.then(() => { el.style.transition = ''; }).catch(() => {});
+  };
+
+  measure();
+  place(false);
+  grid.classList.add('is-ready');
+  if (!calm) grid.animate([{ opacity: 0, translate: '0 40px' }, { opacity: 1, translate: '0 0' }], { duration: 1000, delay: 300, easing: EASE, fill: 'backwards' });
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { measure(); place(false); }, 120); });
+
+  btnNext.addEventListener('click', deckNext);
+  btnPrev.addEventListener('click', () => deckPrev());
+
+  // Trascinare la foto davanti (elastica: si allontana al massimo di 150 px, 80 su telefono)
+  let drag = null;
+  items.forEach((el, i) => el.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || i !== front) return;
+    drag = { i, x: e.clientX, t: performance.now(), moved: false, dx: 0 };
+  }));
+  window.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (!drag.moved && Math.abs(dx) < 6) return;
+    drag.moved = true;
+    const max = window.matchMedia('(max-width: 820px)').matches ? 80 : 150;
+    const off = max * Math.tanh(dx / max / 1.2);
+    drag.dx = dx;
+    const el = items[drag.i];
+    el.style.transition = 'none';
+    el.style.transform = `${pose(drag.i, 0)} translateX(${off}px) rotate(${off * .04}deg)`;
+  });
+  const dropCard = () => {
+    if (!drag) return;
+    const { i, dx, moved, t } = drag;
+    drag = null;
+    const el = items[i];
+    if (!moved) return;                                   // semplice clic: lo gestisce "click"
+    el.dataset.dragged = '1';
+    const fast = Math.abs(dx) / Math.max(1, performance.now() - t) > .6;
+    if (dx < -60 || (fast && dx < -20)) deckNext();
+    else if (dx > 60 || (fast && dx > 20)) deckPrev(el.style.transform);
+    else { el.style.transition = ''; el.style.transform = pose(i, 0); }
+  };
+  window.addEventListener('pointerup', dropCard);
+  window.addEventListener('pointercancel', dropCard);
+
+  // ---- Carosello ----
+  const box = document.querySelector('[data-viewer]');
+  if (!box) return;
+  const track = box.querySelector('[data-viewer-track]');
+  const count = box.querySelector('[data-viewer-count]');
+  const prev = box.querySelector('[data-viewer-prev]');
+  const next = box.querySelector('[data-viewer-next]');
+  const closeBtn = box.querySelector('[data-viewer-close]');
+  track.innerHTML = items.map(el => {
+    const img = el.querySelector('img');
+    return `<figure class="viewer-slide"><img src="${el.dataset.full}" alt="${img.alt.replace(/"/g, '&quot;')}" loading="lazy" decoding="async" draggable="false"></figure>`;
+  }).join('');
+  const slides = [...track.children];
+  let index = 0, lastFocus = null;
+
+  const go = (i, animate = true) => {
+    index = Math.max(0, Math.min(items.length - 1, i));
+    track.style.transition = animate && !calm ? 'transform .6s cubic-bezier(.2, .8, .2, 1)' : 'none';
+    track.style.transform = `translateX(${-index * 100}%)`;
+    count.textContent = `${pad(index + 1)} / ${pad(items.length)}`;
+    prev.disabled = index === 0;
+    next.disabled = index === items.length - 1;
+    // carica subito la foto aperta e le vicine
+    [index - 1, index, index + 1].forEach(n => slides[n] && slides[n].querySelector('img').setAttribute('loading', 'eager'));
+  };
+  const open = i => {
+    lastFocus = document.activeElement;
+    box.hidden = false;
+    document.body.classList.add('no-scroll');
+    go(i, false);
+    if (!calm) box.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: 'ease-out' });
+    closeBtn.focus();
+    if (!(history.state && history.state.viewer)) history.pushState({ viewer: true }, '');
+  };
+  const hide = () => {
+    box.hidden = true;
+    document.body.classList.remove('no-scroll');
+    if (front !== index) { front = index; place(false); }   // il mazzo resta sull'ultima foto vista
+    lastFocus = items[front];
+    if (lastFocus) lastFocus.focus({ preventScroll: true });
+  };
+  const close = () => { if (history.state && history.state.viewer) history.back(); else hide(); };
+  window.addEventListener('popstate', () => { if (!box.hidden) hide(); });
+
+  // clic sulla foto davanti (non dopo un trascinamento) = carosello da quella foto
+  items.forEach((el, i) => el.addEventListener('click', () => {
+    if (el.dataset.dragged) { delete el.dataset.dragged; return; }
+    if (i === front) open(i);
+  }));
+  prev.addEventListener('click', () => go(index - 1));
+  next.addEventListener('click', () => go(index + 1));
+  closeBtn.addEventListener('click', close);
+  document.addEventListener('keydown', e => {
+    if (box.hidden) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowLeft') go(index - 1);
+    else if (e.key === 'ArrowRight') go(index + 1);
+  });
+
+  // Swipe / trascinamento: la foto segue il dito; oltre il 18% o con un colpo veloce si passa alla successiva
+  let start = null;
+  const stage = box.querySelector('.viewer-stage');
+  stage.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    start = { x: e.clientX, y: e.clientY, t: performance.now(), w: stage.clientWidth, moved: false };
+  });
+  window.addEventListener('pointermove', e => {
+    if (!start || box.hidden) return;
+    const dx = e.clientX - start.x;
+    if (!start.moved && Math.abs(dx) < 6) return;
+    start.moved = true;
+    const edge = (index === 0 && dx > 0) || (index === items.length - 1 && dx < 0);
+    const off = edge ? dx / 3 : dx;                              // ai bordi fa resistenza
+    track.style.transition = 'none';
+    track.style.transform = `translateX(calc(${-index * 100}% + ${off}px))`;
+  });
+  const release = e => {
+    if (!start) return;
+    const dx = (e && e.clientX != null ? e.clientX : start.x) - start.x;
+    const fast = Math.abs(dx) / Math.max(1, performance.now() - start.t) > .5;
+    const moved = start.moved;
+    const w = start.w;
+    start = null;
+    if (!moved) { if (e && stage.contains(e.target) && e.target.tagName !== 'IMG') close(); return; } // clic sul nero attorno = chiudi
+    if (Math.abs(dx) > w * .18 || fast) go(index + (dx < 0 ? 1 : -1)); else go(index);
+  };
+  window.addEventListener('pointerup', release);
+  window.addEventListener('pointercancel', () => release(null));
 })();
 
 /* ---------- Form contatti (Formspree) ---------- */
@@ -1022,12 +1291,26 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
     const text = word.textContent.trim();
     word.setAttribute('aria-label', text);
     word.textContent = '';
-    [...text].forEach(ch => {
-      const s = document.createElement('span');
-      s.className = ch === ' ' ? 'ch sp' : 'ch';
-      s.setAttribute('aria-hidden', 'true');
-      s.textContent = ch === ' ' ? '\u00a0' : ch; // lo spazio tra due parole non deve sparire
-      word.appendChild(s);
+    // ogni parola tiene unite le sue lettere (.wd): i titoli lunghi vanno a capo tra le parole, mai a met\u00e0
+    text.split(/\s+/).forEach((part, n) => {
+      if (n) {
+        const sp = document.createElement('span');
+        sp.className = 'ch sp';
+        sp.setAttribute('aria-hidden', 'true');
+        sp.textContent = '\u00a0'; // lo spazio tra due parole non deve sparire
+        word.appendChild(sp);
+        word.appendChild(document.createTextNode('\u200b')); // punto in cui si pu\u00f2 andare a capo
+      }
+      const wd = document.createElement('span');
+      wd.className = 'wd';
+      [...part].forEach(ch => {
+        const s = document.createElement('span');
+        s.className = 'ch';
+        s.setAttribute('aria-hidden', 'true');
+        s.textContent = ch;
+        wd.appendChild(s);
+      });
+      word.appendChild(wd);
     });
   });
 
@@ -1156,3 +1439,21 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   }, 1500);
 })();
 
+
+/* ---------- Tornando indietro si riparte dove eri ----------
+   Es. home → pagina di un lavoro → "indietro": la home torna allo stesso punto dei Lavori.
+   (Il browser da solo non ci riesce: la griglia si compone dopo il caricamento.) */
+(function keepScroll() {
+  const key = 'y:' + location.pathname;
+  window.addEventListener('pagehide', () => {
+    try { sessionStorage.setItem(key, String(Math.round(window.scrollY))); } catch (e) {}
+  });
+  const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  if (!nav || nav.type !== 'back_forward') return;
+  let y = null;
+  try { y = sessionStorage.getItem(key); } catch (e) {}
+  if (y === null) return;
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  const go = () => requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: +y, behavior: 'instant' })));
+  if (document.readyState === 'complete') go(); else window.addEventListener('load', go, { once: true });
+})();

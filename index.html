@@ -122,7 +122,7 @@
   (function () {
     var d = document.documentElement;
     d.classList.add('js');
-    // Intro con il logo: a ogni arrivo e a ogni ricarica, ma non tornando da un'altra pagina del sito (es. privacy)
+    // Intro con il logo: a ogni arrivo e a ogni ricarica, ma non tornando da un'altra pagina del sito (es. privacy, lavori)
     var fromSite = false;
     try {
       var ref = document.referrer ? new URL(document.referrer) : null;
@@ -130,6 +130,8 @@
       var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
       var reload = nav ? nav.type === 'reload' : false;
       fromSite = !reload && !!ref && ref.origin === location.origin && home(ref.pathname) !== home(location.pathname);
+      // tornando indietro (es. da una pagina dei lavori): niente intro, la pagina riparte dove eri
+      if (nav && nav.type === 'back_forward') fromSite = true;
     } catch (e) {}
     if (!fromSite && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       d.classList.add('has-intro');
@@ -273,8 +275,8 @@
   <!-- GRIGLIA DI LAVORI (foto e video insieme, ispirata a brunosuraski.com)
        4 colonne su desktop, 2 su mobile; ogni card tiene il suo formato e si incastra da sola.
        L'ordine qui sotto è l'ordine della griglia (dall'alto).
-       Video orizzontale 16:9 (largo 2 colonne):
-         <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/…" data-preview="assets/lavori/01-preview.mp4" aria-label="Guarda: Nome progetto"><img src="assets/lavori/01.jpg" alt="Nome progetto"></button>
+       Video orizzontale 16:9 (largo 2 colonne): è un link alla pagina del lavoro (creata da .claude/genera-lavori.py)
+         <a href="lavori/nome/" class="tile tile--video" data-kind="video" data-video="https://vimeo.com/…" data-preview="assets/lavori/01-preview.mp4" aria-label="Guarda: Nome progetto"><img src="assets/lavori/01.jpg" alt="Nome progetto"></a>
        Video verticale 9:16 (largo 1 colonna): aggiungi tile--vertical alla classe.
        Foto 3:4 (larga 1 colonna):
          <button class="tile tile--photo" type="button" data-kind="photo" aria-label="Guarda la foto"><img src="assets/lavori/foto-01.jpg" alt="Descrizione"></button>
@@ -282,9 +284,9 @@
   <!-- Sotto ogni card: didascalia <p class="tile-cap"> con nome (cap-name) a sinistra e tipo di lavoro (cap-type) a destra.
        Deve stare SUBITO dopo la sua card. -->
   <div class="pile" data-pile>
-      <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/1244368462" data-preview="assets/lavori/mrfrank.mp4" aria-label="Guarda: Mr Frank"><img src="assets/lavori/mrfrank.jpg" alt="Mr Frank" loading="lazy" decoding="async"></button>
-      <p class="tile-cap"><span class="cap-name">Mr Frank</span> <span class="cap-type accent">Yacht commercial</span></p>
-      <!-- Scheda del lavoro: si vede sotto il video quando lo apri (Google la legge comunque). Deve stare subito dopo la didascalia. -->
+      <a href="lavori/mr-frank/" class="tile tile--video" data-kind="video" data-video="https://vimeo.com/1244368462" data-preview="assets/lavori/mrfrank.mp4" aria-label="Guarda: Mr Frank"><img src="assets/lavori/mrfrank.jpg" alt="Mr Frank" loading="lazy" decoding="async"></a>
+      <p class="tile-cap"><a class="cap-name" href="lavori/mr-frank/">Mr Frank</a> <span class="cap-type accent">Yacht commercial</span></p>
+      <!-- Scheda del lavoro: è il testo della pagina del lavoro (lavori/nome/). Deve stare subito dopo la didascalia. -->
       <div class="work-info" hidden>
         <p class="work-text">Un commercial per Mr Frank, explorer yacht Terranova 85: la barca vista dal drone mentre scorre lungo la costa, gli spazi a bordo, il ritmo lento del mare. L’obiettivo era far sentire com’è viverla, non solo vederla.</p>
         <dl class="work-meta">
@@ -295,8 +297,8 @@
           <div><dt>Ruolo</dt><dd>Regia, riprese, drone, montaggio e color</dd></div>
         </dl>
       </div>
-      <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/1244371532" data-preview="assets/lavori/officina-sartoriale.mp4" aria-label="Guarda: Officina Sartoriale"><img src="assets/lavori/officina-sartoriale.jpg" alt="Officina Sartoriale" loading="lazy" decoding="async"></button>
-      <p class="tile-cap"><span class="cap-name">Officina Sartoriale</span> <span class="cap-type accent">Corporate video</span></p>
+      <a href="lavori/officina-sartoriale/" class="tile tile--video" data-kind="video" data-video="https://vimeo.com/1244371532" data-preview="assets/lavori/officina-sartoriale.mp4" aria-label="Guarda: Officina Sartoriale"><img src="assets/lavori/officina-sartoriale.jpg" alt="Officina Sartoriale" loading="lazy" decoding="async"></a>
+      <p class="tile-cap"><a class="cap-name" href="lavori/officina-sartoriale/">Officina Sartoriale</a> <span class="cap-type accent">Corporate video</span></p>
       <div class="work-info" hidden>
         <p class="work-text">Un corporate video dentro un laboratorio di sartoria: le mani, i tessuti, le macchine e il tempo che serve per fare un capo su misura. Il mestiere raccontato da vicino, con la luce vera del laboratorio.</p>
         <dl class="work-meta">
@@ -306,8 +308,8 @@
           <div><dt>Ruolo</dt><dd>Riprese, montaggio e color</dd></div>
         </dl>
       </div>
-      <button class="tile tile--video tile--vertical" type="button" data-kind="video" data-video="https://vimeo.com/1244683779" data-preview="assets/lavori/bellenova.mp4" aria-label="Guarda: Bellenova"><img src="assets/lavori/bellenova.jpg" alt="Bellenova, massaggio in un centro estetico" loading="lazy" decoding="async"></button>
-      <p class="tile-cap"><span class="cap-name">Bellenova</span> <span class="cap-type accent">Beauty &amp; wellness</span></p>
+      <a href="lavori/bellenova/" class="tile tile--video tile--vertical" data-kind="video" data-video="https://vimeo.com/1244683779" data-preview="assets/lavori/bellenova.mp4" aria-label="Guarda: Bellenova"><img src="assets/lavori/bellenova.jpg" alt="Bellenova, massaggio in un centro estetico" loading="lazy" decoding="async"></a>
+      <p class="tile-cap"><a class="cap-name" href="lavori/bellenova/">Bellenova</a> <span class="cap-type accent">Beauty &amp; wellness</span></p>
       <div class="work-info" hidden>
         <p class="work-text">Un video verticale per Bellenova, centro estetico: un massaggio raccontato da vicino, con luce morbida, gesti lenti e la calma della cabina. Pensato per i social, per far sentire l’esperienza prima ancora di prenotarla.</p>
         <dl class="work-meta">
@@ -318,8 +320,8 @@
           <div><dt>Ruolo</dt><dd>Riprese, montaggio e color</dd></div>
         </dl>
       </div>
-      <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/1244363686" data-preview="assets/lavori/anastasio.mp4" style="aspect-ratio: 4 / 3" aria-label="Guarda: Anastasio"><img src="assets/lavori/anastasio.jpg" alt="Anastasio" loading="lazy" decoding="async"></button>
-      <p class="tile-cap"><span class="cap-name">Anastasio</span> <span class="cap-type accent">Live concert</span></p>
+      <a href="lavori/anastasio/" class="tile tile--video" data-kind="video" data-video="https://vimeo.com/1244363686" data-preview="assets/lavori/anastasio.mp4" style="aspect-ratio: 4 / 3" aria-label="Guarda: Anastasio"><img src="assets/lavori/anastasio.jpg" alt="Anastasio" loading="lazy" decoding="async"></a>
+      <p class="tile-cap"><a class="cap-name" href="lavori/anastasio/">Anastasio</a> <span class="cap-type accent">Live concert</span></p>
       <div class="work-info" hidden>
         <p class="work-text">Il live di Anastasio a Napoli per LMNPP: il palco, la band e il pubblico che canta ogni parola. Un racconto veloce, girato sotto il palco e tra la gente, per restituire l’energia della serata.</p>
         <dl class="work-meta">
@@ -332,8 +334,8 @@
       </div>
       <button class="tile tile--photo" type="button" data-kind="photo" style="aspect-ratio: 2 / 3" aria-label="Guarda la foto: Pizza margherita con due calici di vino"><img src="assets/lavori/foto-pizza.jpg" alt="Pizza margherita con due calici di vino" loading="lazy" decoding="async"></button>
       <p class="tile-cap"><span class="cap-name">’Na Poesia</span> <span class="cap-type accent">Food</span></p>
-      <button class="tile tile--video tile--vertical" type="button" data-kind="video" data-video="https://vimeo.com/1244371741" data-preview="assets/lavori/alaia-gallo.mp4" aria-label="Guarda: Alaia e Gallo"><img src="assets/lavori/alaia-gallo.jpg" alt="Alaia e Gallo" loading="lazy" decoding="async"></button>
-      <p class="tile-cap"><span class="cap-name">Alaia &amp; Gallo</span> <span class="cap-type accent">Music video</span></p>
+      <a href="lavori/alaia-gallo/" class="tile tile--video tile--vertical" data-kind="video" data-video="https://vimeo.com/1244371741" data-preview="assets/lavori/alaia-gallo.mp4" aria-label="Guarda: Alaia e Gallo"><img src="assets/lavori/alaia-gallo.jpg" alt="Alaia e Gallo" loading="lazy" decoding="async"></a>
+      <p class="tile-cap"><a class="cap-name" href="lavori/alaia-gallo/">Alaia &amp; Gallo</a> <span class="cap-type accent">Music video</span></p>
       <div class="work-info" hidden>
         <p class="work-text">Il video di “Lipstick” di Alaia &amp; Gallo: luce rossa, consolle e un ritmo serrato. Girato in verticale, pensato per vivere sui social.</p>
         <dl class="work-meta">
@@ -346,8 +348,8 @@
       </div>
       <button class="tile tile--photo" type="button" data-kind="photo" style="aspect-ratio: 16 / 9" aria-label="Guarda la foto: yacht Cubbo Yacht visto dall'alto con il drone"><img src="assets/lavori/foto-barca-drone.jpg" alt="Yacht Cubbo Yacht visto dall'alto con il drone" loading="lazy" decoding="async"></button>
       <p class="tile-cap"><span class="cap-name">Cubbo Yacht</span> <span class="cap-type accent">Aerial photography</span></p>
-      <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/1244682943" data-preview="assets/lavori/umberto-rossella.mp4" aria-label="Guarda: Umberto e Rossella"><img src="assets/lavori/umberto-rossella.jpg" alt="Umberto e Rossella" loading="lazy" decoding="async"></button>
-      <p class="tile-cap"><span class="cap-name">Umberto e Rossella</span> <span class="cap-type accent">Wedding film</span></p>
+      <a href="lavori/umberto-rossella/" class="tile tile--video" data-kind="video" data-video="https://vimeo.com/1244682943" data-preview="assets/lavori/umberto-rossella.mp4" aria-label="Guarda: Umberto e Rossella"><img src="assets/lavori/umberto-rossella.jpg" alt="Umberto e Rossella" loading="lazy" decoding="async"></a>
+      <p class="tile-cap"><a class="cap-name" href="lavori/umberto-rossella/">Umberto e Rossella</a> <span class="cap-type accent">Wedding film</span></p>
       <div class="work-info" hidden>
         <p class="work-text">Il matrimonio di Umberto e Rossella a Napoli, dai preparativi alla festa: momenti veri, emozioni spontanee e la città vista dall’alto con il drone.</p>
         <dl class="work-meta">
@@ -359,8 +361,8 @@
       </div>
       <button class="tile tile--photo" type="button" data-kind="photo" style="aspect-ratio: 4 / 5" aria-label="Guarda la foto: Crudi di pesce su un piatto bianco"><img src="assets/lavori/foto-colmare.jpg" alt="Crudi di pesce su un piatto bianco" loading="lazy" decoding="async"></button>
       <p class="tile-cap"><span class="cap-name">Colmare</span> <span class="cap-type accent">Food</span></p>
-      <button class="tile tile--video tile--vertical" type="button" data-kind="video" data-video="https://vimeo.com/1244372300" data-preview="assets/lavori/stufe-primavera.mp4" aria-label="Guarda: Stufe di Nerone"><img src="assets/lavori/stufe-primavera.jpg" alt="Stufe di Nerone, terme di Bacoli" loading="lazy" decoding="async"></button>
-      <p class="tile-cap"><span class="cap-name">Stufe di Nerone</span> <span class="cap-type accent">Spa &amp; wellness</span></p>
+      <a href="lavori/stufe-di-nerone/" class="tile tile--video tile--vertical" data-kind="video" data-video="https://vimeo.com/1244372300" data-preview="assets/lavori/stufe-primavera.mp4" aria-label="Guarda: Stufe di Nerone"><img src="assets/lavori/stufe-primavera.jpg" alt="Stufe di Nerone, terme di Bacoli" loading="lazy" decoding="async"></a>
+      <p class="tile-cap"><a class="cap-name" href="lavori/stufe-di-nerone/">Stufe di Nerone</a> <span class="cap-type accent">Spa &amp; wellness</span></p>
       <div class="work-info" hidden>
         <p class="work-text">“Respira”, un video verticale per le Stufe di Nerone, le terme di Bacoli: il parco, le piscine di acqua termale e la calma del posto, raccontati dall’alto con il drone e da vicino.</p>
         <dl class="work-meta">
@@ -372,10 +374,19 @@
           <div><dt>Ruolo</dt><dd>Riprese, montaggio e color</dd></div>
         </dl>
       </div>
-      <button class="tile tile--photo" type="button" data-kind="photo" style="aspect-ratio: 2 / 3" aria-label="Guarda la foto: Evento sportivo allo stadio Maradona"><img src="assets/lavori/foto-dctraining.jpg" alt="Evento sportivo allo stadio Maradona" loading="lazy" decoding="async"></button>
-      <p class="tile-cap"><span class="cap-name">DC Training</span> <span class="cap-type accent">Sport event</span></p>
-      <button class="tile tile--video" type="button" data-kind="video" data-video="https://vimeo.com/1226405523" data-preview="assets/lavori/naufraghi.mp4" aria-label="Guarda: Naufraghi"><img src="assets/lavori/naufraghi.jpg" alt="Naufraghi" loading="lazy" decoding="async"></button>
-      <p class="tile-cap"><span class="cap-name">Naufraghi</span> <span class="cap-type accent">Music video</span></p>
+      <a href="lavori/dc-training/" class="tile tile--photo" data-kind="photo" style="aspect-ratio: 2 / 3" aria-label="Guarda le foto: DC Training"><img src="assets/lavori/foto-dctraining.jpg" alt="Evento sportivo allo stadio Maradona" loading="lazy" decoding="async"></a>
+      <p class="tile-cap"><a class="cap-name" href="lavori/dc-training/">DC Training</a> <span class="cap-type accent">Sport event</span></p>
+      <div class="work-info" hidden>
+        <p class="work-text">DC Training allo Stadio Diego Armando Maradona: una mattina di sport e benessere sul campo, dalla colazione all’allenamento di gruppo fino al bagno sonoro con le campane tibetane. Il racconto per immagini di una giornata piena di energia.</p>
+        <dl class="work-meta">
+          <div><dt>Cliente</dt><dd>DC Training</dd></div>
+          <div><dt>Luogo</dt><dd>Stadio Maradona, Napoli</dd></div>
+          <div><dt>Anno</dt><dd>2026</dd></div>
+          <div><dt>Ruolo</dt><dd>Fotografia</dd></div>
+        </dl>
+      </div>
+      <a href="lavori/naufraghi/" class="tile tile--video" data-kind="video" data-video="https://vimeo.com/1226405523" data-preview="assets/lavori/naufraghi.mp4" aria-label="Guarda: Naufraghi"><img src="assets/lavori/naufraghi.jpg" alt="Naufraghi" loading="lazy" decoding="async"></a>
+      <p class="tile-cap"><a class="cap-name" href="lavori/naufraghi/">Naufraghi</a> <span class="cap-type accent">Music video</span></p>
       <div class="work-info" hidden>
         <p class="work-text">Un breve music video per “Naufraghi” di Nuken: un falò in spiaggia, il tramonto e due amici. Pochi elementi, luce naturale e un’atmosfera da fine estate.</p>
         <dl class="work-meta">
@@ -528,7 +539,7 @@
           <svg viewBox="0 0 5 5" aria-hidden="true"><path d="M0 0h1v1H0zM4 0h1v1H4zM1 1h1v1H1zM3 1h1v1H3zM0 2h2v1H0zM3 2h2v1H3zM1 3h1v1H1zM3 3h1v1H3zM0 4h1v1H0zM4 4h1v1H4z"/></svg>
           <span>Emanuele Lombardi</span>
         </div>
-        <p class="label">Videomaker and Photographer</p>
+        <p class="footer-role accent">Videomaker and Photographer</p>
       </div>
       <nav class="footer-col" aria-label="Menu">
         <p class="label">Menu</p>
