@@ -851,18 +851,20 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
     step = mob ? 8 : 12;
     const W = grid.clientWidth;
     const H = mob ? Math.max(320, Math.min(440, window.innerHeight - 400)) : Math.max(380, Math.min(580, window.innerHeight - 440));   // il mazzo sta tutto nello schermo
+    const ratios = items.map(el => el.style.aspectRatio.split('/').map(Number));
+    const mixed = ratios.some(([w, h]) => w > h) && ratios.some(([w, h]) => w <= h);
     sizes = items.map(el => {
       const [aw, ah] = el.style.aspectRatio.split('/').map(Number);
       let w = H * aw / ah, h = H;
       const maxW = W - step * SHOW - 8;
-      if (aw > ah) w = H * 1.1;                     // foto orizzontali più piccole: non coprono il mazzo
+      if (aw > ah && mixed) w = H * 1.1;            // tra foto verticali, quelle orizzontali più piccole: non coprono il mazzo
       if (w > maxW) w = maxW;
       h = w * ah / aw;
       el.style.width = w + 'px';
       el.style.height = h + 'px';
       return { w, h };
     });
-    grid.style.height = H + step * SHOW + 'px';
+    grid.style.height = Math.max(...sizes.map(z => z.h)) + step * SHOW + 'px';   // alto quanto la foto più alta
   };
 
   const depthOf = i => (i - front + n) % n;

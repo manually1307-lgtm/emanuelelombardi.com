@@ -1336,6 +1336,7 @@ button.tile { cursor: pointer; }
 .crumbs a { transition: color .2s ease; }
 .crumbs a:hover, .crumbs [aria-current] { color: var(--white); }
 .work-hero .word { text-align: right; }
+.work-hero .section-head .lead { flex: none; white-space: nowrap; }   /* il tipo di lavoro resta su una riga */
 
 .work-main { display: flex; flex-direction: column; gap: var(--gap); }
 .work-player {
