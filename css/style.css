@@ -343,10 +343,11 @@ button.tile { cursor: pointer; }
 
 .reel-stack {
   position: absolute;
-  left: calc(50% - 275 * var(--h));          /* = 445 su 1440, ma resta centrato */
-  top: calc(var(--oy) + 210 * var(--h));
-  width: calc(488 * var(--h));
-  height: calc(275 * var(--h));
+  /* Ingrandito del 12% su richiesta (prima 488×275 a 445/210): stesso centro, stesso bordo inferiore */
+  left: calc(50% - 304 * var(--h));          /* = 416 su 1440, ma resta centrato */
+  top: calc(var(--oy) + 177 * var(--h));
+  width: calc(546 * var(--h));
+  height: calc(308 * var(--h));
 }
 
 /* Mazzo di showreel: ogni card ha la sua posizione (data-pos 0 = davanti) */
@@ -469,6 +470,13 @@ button.tile { cursor: pointer; }
 
 .scroll-cue { display: inline-flex; align-items: center; gap: 8px; }
 .scroll-cue svg { width: 10px; height: 14px; }
+/* La freccia di "Scroll" scende di poco e torna su, con una pausa tra un movimento e l'altro (invito a scorrere) */
+.scroll-cue svg { overflow: visible; animation: scroll-nudge 2.4s cubic-bezier(.45, 0, .25, 1) infinite; }
+@keyframes scroll-nudge {
+  0%, 55%, 100% { transform: translateY(0); }
+  28% { transform: translateY(5px); }
+}
+@media (prefers-reduced-motion: reduce) { .scroll-cue svg { animation: none; } }
 .based { text-align: right; }
 .based-br { display: none; }
 
@@ -1030,6 +1038,34 @@ button.tile { cursor: pointer; }
 .wa-text .accent { font-size: 32px; letter-spacing: 0; }
 .wa-word { font-size: 32px; line-height: 1; letter-spacing: -0.03em; text-transform: uppercase; }
 .wa-banner .button { flex: none; }
+
+/* Scia "energia" sul bottone: un tratto corto con i colori del gradiente (blu → arancio) che corre
+   LUNGO la linea bianca del bottone. È un gradiente a cono ritagliato ad anello sottile (mask):
+   si vede solo sulla linea, che lì si colora e diventa un po' più spessa (2 px invece di 1).
+   .wa-glow è la stessa scia, sfocata di poco, per l'alone stretto attorno alla linea.
+   L'angolo --wa-a è animato (serve @property; dove non c'è, la scia resta ferma). */
+@property --wa-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.wa-button { position: relative; }
+.wa-button::before, .wa-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  padding: 2px;
+  border-radius: 999px;
+  background: conic-gradient(from var(--wa-a),
+    transparent 0deg, transparent 262deg,
+    #4100F5 285deg, #2F5BFF 305deg, #FF4632 330deg, #FF7A1A 352deg, #FFD9B0 358deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: wa-spin 3.6s linear infinite;
+  pointer-events: none;
+}
+.wa-glow { position: absolute; inset: 0; border-radius: 999px; filter: blur(3px); pointer-events: none; }
+.wa-glow::before { inset: -2.5px; padding: 4px; }
+@keyframes wa-spin { to { --wa-a: 360deg; } }
+@media (prefers-reduced-motion: reduce) {
+  .wa-button::before, .wa-glow::before { animation: none; }
+}
 @media (max-width: 820px) {
   .wa-banner { flex-direction: column; align-items: stretch; gap: 20px; padding: 24px 0; }
   .wa-text .accent, .wa-word { font-size: 24px; }
