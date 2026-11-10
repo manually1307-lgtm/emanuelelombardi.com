@@ -1019,6 +1019,48 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   window.addEventListener('pointerup', dropCard);
   window.addEventListener('pointercancel', dropCard);
 
+  // Trackpad: swipe a due dita verso destra/sinistra (come nel mazzo della home).
+  // move(acc) = la foto segue le dita; oltre "limit" px parte go(acc); se il gesto è corto, cancel().
+  // Un gesto = una foto sola: la coda del gesto (inerzia del trackpad) viene ignorata.
+  const wheelSwipe = (target, o) => {
+    let g = null;
+    const end = () => { if (!g) return; clearTimeout(g.timer); const done = g.done; g = null; if (!done) o.cancel(); };
+    target.addEventListener('wheel', e => {
+      if (e.ctrlKey || o.busy()) return;                                // pizzico per lo zoom / trascinamento in corso
+      if (!g && Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;       // gesto verticale: scorre la pagina
+      e.preventDefault();                                               // niente "pagina indietro" del browser
+      const now = performance.now(), a = Math.abs(e.deltaX);
+      if (!g) g = { acc: 0, done: false, last: 0, t0: now, timer: 0 };
+      clearTimeout(g.timer);
+      g.timer = setTimeout(end, 140);                                   // dita ferme: fine del gesto
+      if (g.done) {
+        if (now - g.t0 > 350 && a > g.last + 6) end();                  // i valori risalgono: è un nuovo swipe
+        else g.last = a;
+        return;
+      }
+      g.acc -= e.deltaX;                                                // dita a sinistra = foto a sinistra
+      if (Math.abs(g.acc) > o.limit) { g.done = true; g.last = a; g.t0 = now; o.go(g.acc); }
+      else o.move(g.acc);
+    }, { passive: false });
+  };
+  wheelSwipe(grid, {
+    limit: 70,
+    busy: () => !!drag,
+    move: acc => {
+      const off = 150 * Math.tanh(acc / 150);
+      const el = items[front];
+      el.style.transition = 'none';
+      el.style.transform = `${pose(front, 0)} translateX(${off}px) rotate(${off * .04}deg)`;
+    },
+    go: acc => {
+      if (acc < 0) { deckNext(); return; }
+      const el = items[front], from = el.style.transform;
+      el.style.transition = '';
+      deckPrev(from);
+    },
+    cancel: () => { const el = items[front]; el.style.transition = ''; el.style.transform = pose(front, 0); },
+  });
+
   // ---- Carosello ----
   const box = document.querySelector('[data-viewer]');
   if (!box) return;
@@ -1116,6 +1158,19 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   };
   window.addEventListener('pointerup', release);
   window.addEventListener('pointercancel', () => release(null));
+
+  // Trackpad anche nel carosello: la foto segue le dita, ai bordi fa resistenza
+  wheelSwipe(stage, {
+    limit: 90,
+    busy: () => !!start || box.hidden,
+    move: acc => {
+      const edge = (index === 0 && acc > 0) || (index === items.length - 1 && acc < 0);
+      track.style.transition = 'none';
+      track.style.transform = `translateX(calc(${-index * 100}% + ${edge ? acc / 3 : acc}px))`;
+    },
+    go: acc => go(index + (acc < 0 ? 1 : -1)),
+    cancel: () => go(index),
+  });
 })();
 
 /* ---------- Form contatti (Formspree) ---------- */
