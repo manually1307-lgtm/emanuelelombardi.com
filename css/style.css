@@ -3,6 +3,16 @@
    I valori seguono gli stili di testo del file Figma.
    ========================================================= */
 
+/* EB Garamond Italic: il file sta nel sito (assets/fonts), niente collegamenti a Google Fonts.
+   Licenza libera SIL Open Font License. Contiene le lettere latine (italiano, inglese, francese, spagnolo…). */
+@font-face {
+  font-family: "EB Garamond";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/eb-garamond-italic.woff2") format("woff2");
+}
+
 :root {
   /* Colori */
   --black: #000000;
@@ -1005,6 +1015,26 @@ button.tile { cursor: pointer; }
 }
 .big-mail:hover { color: var(--gray); }
 
+/* ---------- Banner WhatsApp (solo nei Contatti, tra il form e l'email grande) ----------
+   Riga tra due linee sottili: corsivo + parola maiuscola a sinistra, bottone a destra (la frase al centro è stata tolta su richiesta). */
+.wa-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 28px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.wa-text { margin: 0; display: flex; align-items: baseline; gap: 12px; white-space: nowrap; }
+.wa-text .accent { font-size: 32px; letter-spacing: 0; }
+.wa-word { font-size: 32px; line-height: 1; letter-spacing: -0.03em; text-transform: uppercase; }
+.wa-banner .button { flex: none; }
+@media (max-width: 820px) {
+  .wa-banner { flex-direction: column; align-items: stretch; gap: 20px; padding: 24px 0; }
+  .wa-text .accent, .wa-word { font-size: 24px; }
+}
+
 @media (max-width: 820px) {
   .form { grid-template-columns: 1fr; gap: 36px; }
   .chips { gap: 8px; }
@@ -1274,7 +1304,7 @@ button.tile { cursor: pointer; }
     .site-header, .reel-stack, .hero-hi, .hero-first, .hero-last, .hero-role, .hero-bar,
     .section-head .lead, .word, .section .tile, .tile-cap, .controls,
     .pills li, .bio-lead, .bio-text, .services li, .sectors .label,
-    .form .field, .form-end, .big-mail, .footer-top > *, .footer-legal
+    .form .field, .form-end, .wa-banner, .big-mail, .footer-top > *, .footer-legal
   ):not(.is-in) { opacity: 0; }
 
   .js .section-head { position: relative; border-top-color: transparent; }

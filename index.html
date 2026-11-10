@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Protezione del browser: il sito può caricare script solo dai suoi file, e contenuti esterni solo da
+     Adobe Fonts (caratteri), Vimeo e YouTube (video), Formspree (modulo). Se aggiungi un nuovo servizio esterno va aggiunto qui. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://use.typekit.net https://p.typekit.net; font-src 'self' https://use.typekit.net; img-src 'self' data: https://p.typekit.net; media-src 'self'; frame-src https://player.vimeo.com https://www.youtube-nocookie.com; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'">
 <title>Emanuele Lombardi — Videomaker e fotografo a Napoli</title>
 <meta name="description" content="Videomaker e fotografo a Napoli: video aziendali e commercial, brand film, eventi, nautica e fotografia. In Campania e in tutta Italia.">
 <link rel="canonical" href="https://emanuelelombardi.com/">
@@ -110,38 +113,13 @@
 }
 </script>
 
-<!-- Font: Neue Haas Grotesk (Adobe Fonts) + EB Garamond Italic (Google Fonts) -->
+<!-- Font: Neue Haas Grotesk (Adobe Fonts) + EB Garamond Italic (file nel sito, assets/fonts) -->
 <link rel="stylesheet" href="https://use.typekit.net/gld1ckd.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@1,400&display=swap">
+<link rel="preload" href="assets/fonts/eb-garamond-italic.woff2" as="font" type="font/woff2" crossorigin>
 
 <link rel="stylesheet" href="css/style.css">
 <!-- Attiva le animazioni di comparsa (senza JavaScript il sito si vede comunque tutto) -->
-<script>
-  (function () {
-    var d = document.documentElement;
-    d.classList.add('js');
-    // Intro con il logo: a ogni arrivo e a ogni ricarica, ma non tornando da un'altra pagina del sito (es. privacy, lavori)
-    var fromSite = false;
-    try {
-      var ref = document.referrer ? new URL(document.referrer) : null;
-      var home = function (p) { return p.replace(/index\.html$/, ''); };
-      var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-      var reload = nav ? nav.type === 'reload' : false;
-      fromSite = !reload && !!ref && ref.origin === location.origin && home(ref.pathname) !== home(location.pathname);
-      // tornando indietro (es. da una pagina dei lavori): niente intro, la pagina riparte dove eri
-      if (nav && nav.type === 'back_forward') fromSite = true;
-    } catch (e) {}
-    if (!fromSite && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      d.classList.add('has-intro');
-      // Con l'intro si riparte sempre dall'alto: se il browser riaprisse la pagina a metà,
-      // le comparse di quella sezione partirebbero nascoste dietro lo schermo nero.
-      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
-    }
-  })();
-</script>
+<script src="js/avvio.js" data-home></script>
 </head>
 <body>
 
@@ -455,14 +433,14 @@
       <h2 class="travel-title" id="t-scatti" aria-label="Porto sempre una camera con me">
         <span class="lead accent">Porto sempre una camera</span> <span class="word">con me</span>
       </h2>
-        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:-2;--y:7;--w:220;--r:-12;--mx:-6;--my:1;--mw:112;--mr:-10"><img src="assets/scatti/01.jpg" alt="Gigli arancioni davanti a una casa di campagna" loading="lazy" decoding="async"></button>
-        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:21;--y:1;--w:150;--r:6;--mx:22;--my:8;--mw:100;--mr:7"><img src="assets/scatti/02.jpg" alt="Scala a chiocciola vista dall'alto" loading="lazy" decoding="async"></button>
-        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:66;--y:3;--w:140;--r:-6;--mx:50;--my:0;--mw:104;--mr:-6"><img src="assets/scatti/03.jpg" alt="Tronchi tagliati in un bosco" loading="lazy" decoding="async"></button>
-        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:84;--y:5;--w:210;--r:10;--mx:76;--my:7;--mw:112;--mr:9"><img src="assets/scatti/04.jpg" alt="Gatto bianco e nero dietro un cancello" loading="lazy" decoding="async"></button>
-        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:-1;--y:60;--w:200;--r:8;--mx:-5;--my:68;--mw:110;--mr:8"><img src="assets/scatti/05.jpg" alt="Cane che dorme sulla sabbia in spiaggia" loading="lazy" decoding="async"></button>
-        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:19;--y:73;--w:170;--r:-7;--mx:23;--my:76;--mw:100;--mr:-7"><img src="assets/scatti/06.jpg" alt="Margherite in un movimento circolare" loading="lazy" decoding="async"></button>
-        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:62;--y:75;--w:180;--r:5;--mx:51;--my:70;--mw:104;--mr:5"><img src="assets/scatti/07.jpg" alt="Vicolo di un borgo visto da sotto un arco" loading="lazy" decoding="async"></button>
-        <button class="tile tile--travel" type="button" data-kind="photo" aria-label="Guarda la foto" style="--x:85;--y:55;--w:220;--r:-9;--mx:77;--my:77;--mw:110;--mr:-9"><img src="assets/scatti/08.jpg" alt="Sala di lettura con la cupola di vetro" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" data-full="assets/scatti/01.jpg" aria-label="Guarda la foto" style="--x:-2;--y:7;--w:220;--r:-12;--mx:-6;--my:1;--mw:112;--mr:-10"><img src="assets/scatti/s/01.jpg" alt="Gigli arancioni davanti a una casa di campagna" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" data-full="assets/scatti/02.jpg" aria-label="Guarda la foto" style="--x:21;--y:1;--w:150;--r:6;--mx:22;--my:8;--mw:100;--mr:7"><img src="assets/scatti/s/02.jpg" alt="Scala a chiocciola vista dall'alto" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" data-full="assets/scatti/03.jpg" aria-label="Guarda la foto" style="--x:66;--y:3;--w:140;--r:-6;--mx:50;--my:0;--mw:104;--mr:-6"><img src="assets/scatti/s/03.jpg" alt="Tronchi tagliati in un bosco" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" data-full="assets/scatti/04.jpg" aria-label="Guarda la foto" style="--x:84;--y:5;--w:210;--r:10;--mx:76;--my:7;--mw:112;--mr:9"><img src="assets/scatti/s/04.jpg" alt="Gatto bianco e nero dietro un cancello" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" data-full="assets/scatti/05.jpg" aria-label="Guarda la foto" style="--x:-1;--y:60;--w:200;--r:8;--mx:-5;--my:68;--mw:110;--mr:8"><img src="assets/scatti/s/05.jpg" alt="Cane che dorme sulla sabbia in spiaggia" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" data-full="assets/scatti/06.jpg" aria-label="Guarda la foto" style="--x:19;--y:73;--w:170;--r:-7;--mx:23;--my:76;--mw:100;--mr:-7"><img src="assets/scatti/s/06.jpg" alt="Margherite in un movimento circolare" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" data-full="assets/scatti/07.jpg" aria-label="Guarda la foto" style="--x:62;--y:75;--w:180;--r:5;--mx:51;--my:70;--mw:104;--mr:5"><img src="assets/scatti/s/07.jpg" alt="Vicolo di un borgo visto da sotto un arco" loading="lazy" decoding="async"></button>
+        <button class="tile tile--travel" type="button" data-kind="photo" data-full="assets/scatti/08.jpg" aria-label="Guarda la foto" style="--x:85;--y:55;--w:220;--r:-9;--mx:77;--my:77;--mw:110;--mr:-9"><img src="assets/scatti/s/08.jpg" alt="Sala di lettura con la cupola di vetro" loading="lazy" decoding="async"></button>
     </div>
   </div>
 </section>
@@ -550,6 +528,13 @@
     </div>
     <p class="form-status" role="status" aria-live="polite" data-form-status></p>
   </form>
+
+  <!-- WHATSAPP: per chi preferisce scrivere subito. Il numero sta nel link (wa.me/39 + numero, senza spazi).
+       Compare SOLO qui, nei Contatti (scelta dell'utente: nella home creerebbe confusione). -->
+  <div class="wa-banner">
+    <p class="wa-text"><span class="accent">Preferisci</span> <span class="wa-word">WhatsApp?</span></p>
+    <a class="button" href="https://wa.me/393313083976" target="_blank" rel="noopener"><span>Apri la chat</span><svg viewBox="0 0 13 10" aria-hidden="true"><path d="M.5 5H12M8 .8L12.2 5 8 9.2" fill="none" stroke="currentColor" stroke-width="1.1"/></svg></a>
+  </div>
 
   <a class="big-mail" href="mailto:manu.ally1307@gmail.com">manu.ally1307@gmail.com</a>
 

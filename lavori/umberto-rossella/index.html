@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Protezione del browser: il sito può caricare script solo dai suoi file, e contenuti esterni solo da
+     Adobe Fonts (caratteri), Vimeo e YouTube (video), Formspree (modulo). Se aggiungi un nuovo servizio esterno va aggiunto qui. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://use.typekit.net https://p.typekit.net; font-src 'self' https://use.typekit.net; img-src 'self' data: https://p.typekit.net; media-src 'self'; frame-src https://player.vimeo.com https://www.youtube-nocookie.com; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'">
 <!-- PAGINA CREATA DA .claude/genera-lavori.py: non modificarla qui (verrebbe sovrascritta).
      I testi si cambiano in index.html (scheda del lavoro) o nello script. -->
 <title>Umberto e Rossella — Video di matrimonio a Napoli | Emanuele Lombardi</title>
@@ -69,11 +72,9 @@
 }
 </script>
 <link rel="stylesheet" href="https://use.typekit.net/gld1ckd.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@1,400&display=swap">
+<link rel="preload" href="/assets/fonts/eb-garamond-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/style.css">
-<script>document.documentElement.classList.add('js');</script>
+<script src="/js/avvio.js"></script>
 </head>
 <body class="work-page">
 

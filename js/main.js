@@ -739,7 +739,6 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
 
   const hide = () => {
     box.hidden = true;
-    track.querySelectorAll('.viewer-video').forEach(v => { v.innerHTML = ''; });   // ferma il video
     frame.innerHTML = '';
     if (info) { info.hidden = true; info.innerHTML = ''; }
     box.classList.remove('has-info');
@@ -1346,7 +1345,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   const show = el => el.classList.add('is-in');
 
   if (calm) {
-    document.querySelectorAll('.section-head, .word, .tile, .tile-cap, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .big-mail, .footer-top > *, .footer-legal, .site-header, .reel-stack, .hero-hi, .hero-first, .hero-last, .hero-role, .hero-bar, .section-head .lead').forEach(show);
+    document.querySelectorAll('.section-head, .word, .tile, .tile-cap, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .wa-banner, .big-mail, .footer-top > *, .footer-legal, .site-header, .reel-stack, .hero-hi, .hero-first, .hero-last, .hero-role, .hero-bar, .section-head .lead').forEach(show);
     return;
   }
 
@@ -1393,7 +1392,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
 
   // ---- Resto della pagina, allo scorrimento ----
   const heads = [...document.querySelectorAll('.section-head')];
-  const items = [...document.querySelectorAll('.tile, .tile-cap, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .big-mail, .footer-top > *, .footer-legal')]
+  const items = [...document.querySelectorAll('.tile, .tile-cap, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .wa-banner, .big-mail, .footer-top > *, .footer-legal')]
     .filter(el => !el.closest('.hero') && !el.closest('[data-travel]')); // gli Scatti si animano da soli (travel)
 
   const io = new IntersectionObserver(entries => {
