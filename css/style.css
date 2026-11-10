@@ -348,6 +348,7 @@ button.tile { cursor: pointer; }
   top: calc(var(--oy) + 177 * var(--h));
   width: calc(546 * var(--h));
   height: calc(308 * var(--h));
+  z-index: 1;                                /* il mazzo è un livello unico, SEMPRE sotto il nome (z-index 2) */
 }
 
 /* Mazzo di showreel: ogni card ha la sua posizione (data-pos 0 = davanti) */
