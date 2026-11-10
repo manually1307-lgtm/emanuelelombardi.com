@@ -476,6 +476,50 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
     if (drag && drag.moved) e.preventDefault();
   }, { passive: false });
 
+  // ---- trackpad: swipe a due dita verso destra/sinistra ----
+  // La card davanti segue le dita (elastica come nel trascinamento); oltre la soglia cambia card.
+  // Un gesto = una card sola: la "coda" del gesto (inerzia del trackpad) viene ignorata.
+  let wheel = null;          // { card, acc, done, last, t0, timer }
+  const wheelEnd = () => {
+    if (!wheel) return;
+    clearTimeout(wheel.timer);
+    deckEl.classList.remove('is-dragging');
+    wheel.card.classList.remove('is-dragging');
+    setOffset(wheel.card, 0);
+    wheel = null;
+  };
+  deckEl.addEventListener('wheel', e => {
+    if (e.ctrlKey || drag) return;                                      // pizzico per lo zoom / trascinamento in corso
+    if (!wheel && Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;     // gesto verticale: scorre la pagina
+    e.preventDefault();                                                 // niente "pagina indietro" del browser
+    const now = performance.now(), a = Math.abs(e.deltaX);
+    if (!wheel) {
+      const card = front();
+      if (!card) return;
+      wheel = { card, acc: 0, done: false, last: 0, t0: now, timer: 0 };
+      deckEl.classList.add('is-dragging');
+      card.classList.add('is-dragging');
+    }
+    clearTimeout(wheel.timer);
+    wheel.timer = setTimeout(wheelEnd, 140);                            // dita ferme: fine del gesto
+    if (wheel.done) {
+      // durante l'inerzia i valori calano: se risalgono è un nuovo swipe
+      if (now - wheel.t0 > 350 && a > wheel.last + 6) { wheelEnd(); }
+      else wheel.last = a;
+      return;
+    }
+    wheel.acc -= e.deltaX;                                              // dita a sinistra = card a sinistra
+    setOffset(wheel.card, elastic(wheel.acc));
+    if (Math.abs(wheel.acc) > 70) {
+      const dir = wheel.acc;
+      deckEl.classList.remove('is-dragging');
+      wheel.card.classList.remove('is-dragging');
+      setOffset(wheel.card, 0);
+      wheel.done = true; wheel.last = a; wheel.t0 = now;
+      (dir < 0 ? next : prev)();
+    }
+  }, { passive: false });
+
   // ---- clic / tastiera ----
   cards.forEach(c => c.addEventListener('click', e => {
     if (suppressClick) { e.preventDefault(); return; }
