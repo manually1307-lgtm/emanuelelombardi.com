@@ -386,9 +386,10 @@ button.tile { cursor: pointer; }
   /* La card sotto il mouse si accende e cresce un po', restando al suo posto nel mazzo:
      è il clic a portarla davanti */
   .deck:hover .deck-card { filter: brightness(.55); }
-  .deck:not(.is-dragging) .deck-card:hover,
+  .deck:not(.is-dragging):not(.is-swiped) .deck-card:hover,
   .deck .deck-card:focus-visible,
-  .deck.is-dragging .deck-card[data-pos="0"] { --s: 1.04; filter: none; }
+  .deck.is-dragging .deck-card[data-pos="0"],
+  .deck.is-swiped .deck-card[data-pos="0"] { --s: 1.04; filter: none; }   /* is-swiped: appena sfogliato col trackpad, mouse fermo */
 }
 
 
@@ -1024,6 +1025,37 @@ button.tile { cursor: pointer; }
 }
 .big-mail:hover { color: var(--gray); }
 
+/* Recapiti: a sinistra email grande, telefono, luogo e (in fondo) i link in maiuscolo; a destra il riquadro col logo */
+.reach { display: flex; justify-content: space-between; align-items: stretch; gap: 40px; padding-top: 12px; }
+.reach-info { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.reach-phone { margin-top: 14px; font-size: clamp(18px, 2.2vw, 32px); line-height: 1.2; letter-spacing: -0.01em; color: var(--gray); transition: color .25s ease; }
+.reach-phone:hover { color: var(--white); }
+.reach-place { margin: 16px 0 0; font-size: 14px; letter-spacing: 0.03em; color: var(--gray-dark, #5E5B57); }
+.reach-links { display: flex; flex-wrap: wrap; gap: 12px 40px; margin-top: auto; padding-top: 48px; font-size: 16px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; }
+.reach-links a { transition: color .25s ease; }
+.reach-links a:hover { color: var(--gray); }
+.reach-photo { position: relative; flex: 0 0 clamp(260px, 30%, 440px); aspect-ratio: 16 / 9; overflow: hidden; background: #161616; }
+/* 6 copertine, 1,2 s l'una (giro di 7,2 s), a stacco netto: niente dissolvenze (richiesta dell'utente) */
+.reach-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; animation: reach-cut 7.2s steps(1, end) infinite; }
+.reach-photo img:nth-child(2) { animation-delay: 1.2s; }
+.reach-photo img:nth-child(3) { animation-delay: 2.4s; }
+.reach-photo img:nth-child(4) { animation-delay: 3.6s; }
+.reach-photo img:nth-child(5) { animation-delay: 4.8s; }
+.reach-photo img:nth-child(6) { animation-delay: 6s; }
+@keyframes reach-cut {
+  0% { opacity: 1; }
+  16.667%, 100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reach-photo img { animation: none; }
+  .reach-photo img:first-child { opacity: 1; }
+}
+@media (max-width: 820px) {
+  .reach { flex-direction: column; gap: 32px; padding-top: 4px; }
+  .reach-links { margin-top: 0; padding-top: 28px; gap: 12px 28px; font-size: 14px; }
+  .reach-photo { flex: none; width: 100%; }
+}
+
 /* ---------- Banner WhatsApp (solo nei Contatti, tra il form e l'email grande) ----------
    Riga tra due linee sottili: corsivo + parola maiuscola a sinistra, bottone a destra (la frase al centro è stata tolta su richiesta). */
 .wa-banner {
@@ -1341,7 +1373,7 @@ button.tile { cursor: pointer; }
     .site-header, .reel-stack, .hero-hi, .hero-first, .hero-last, .hero-role, .hero-bar,
     .section-head .lead, .word, .section .tile, .tile-cap, .controls,
     .pills li, .bio-lead, .bio-text, .services li, .sectors .label,
-    .form .field, .form-end, .wa-banner, .big-mail, .footer-top > *, .footer-legal
+    .form .field, .form-end, .wa-banner, .big-mail, .reach-phone, .reach-place, .reach-links, .reach-photo, .footer-top > *, .footer-legal
   ):not(.is-in) { opacity: 0; }
 
   .js .section-head { position: relative; border-top-color: transparent; }

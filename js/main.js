@@ -476,6 +476,16 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
     if (drag && drag.moved) e.preventDefault();
   }, { passive: false });
 
+  // Dopo un cambio card fatto col trackpad il mouse è fermo e il browser non aggiorna la card
+  // "sotto il mouse": resterebbero tutte scure. Finché il mouse non si muove resta accesa quella davanti.
+  let mx = -1, my = -1;
+  window.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    const moved = Math.abs(e.clientX - mx) + Math.abs(e.clientY - my) > 2;
+    mx = e.clientX; my = e.clientY;
+    if (moved) deckEl.classList.remove('is-swiped');
+  }, { passive: true });
+
   // ---- trackpad: swipe a due dita verso destra/sinistra ----
   // La card davanti segue le dita (elastica come nel trascinamento); oltre la soglia cambia card.
   // Un gesto = una card sola: la "coda" del gesto (inerzia del trackpad) viene ignorata.
@@ -516,6 +526,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
       wheel.card.classList.remove('is-dragging');
       setOffset(wheel.card, 0);
       wheel.done = true; wheel.last = a; wheel.t0 = now;
+      deckEl.classList.add('is-swiped');
       (dir < 0 ? next : prev)();
     }
   }, { passive: false });
@@ -1444,7 +1455,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
   const show = el => el.classList.add('is-in');
 
   if (calm) {
-    document.querySelectorAll('.section-head, .word, .tile, .tile-cap, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .wa-banner, .big-mail, .footer-top > *, .footer-legal, .site-header, .reel-stack, .hero-hi, .hero-first, .hero-last, .hero-role, .hero-bar, .section-head .lead').forEach(show);
+    document.querySelectorAll('.section-head, .word, .tile, .tile-cap, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .wa-banner, .big-mail, .reach-phone, .reach-place, .reach-links, .reach-photo, .footer-top > *, .footer-legal, .site-header, .reel-stack, .hero-hi, .hero-first, .hero-last, .hero-role, .hero-bar, .section-head .lead').forEach(show);
     return;
   }
 
@@ -1491,7 +1502,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
 
   // ---- Resto della pagina, allo scorrimento ----
   const heads = [...document.querySelectorAll('.section-head')];
-  const items = [...document.querySelectorAll('.tile, .tile-cap, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .wa-banner, .big-mail, .footer-top > *, .footer-legal')]
+  const items = [...document.querySelectorAll('.tile, .tile-cap, .controls, .pills li, .bio-lead, .bio-text, .services li, .sectors .label, .form .field, .form-end, .wa-banner, .big-mail, .reach-phone, .reach-place, .reach-links, .reach-photo, .footer-top > *, .footer-legal')]
     .filter(el => !el.closest('.hero') && !el.closest('[data-travel]')); // gli Scatti si animano da soli (travel)
 
   const io = new IntersectionObserver(entries => {
