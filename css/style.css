@@ -1025,11 +1025,9 @@ button.tile { cursor: pointer; }
 }
 .big-mail:hover { color: var(--gray); }
 
-/* Recapiti: a sinistra email grande, telefono, luogo e (in fondo) i link in maiuscolo; a destra il riquadro col logo */
+/* Recapiti: a sinistra email grande, luogo e (in fondo) i link in maiuscolo; a destra il riquadro col logo */
 .reach { display: flex; justify-content: space-between; align-items: stretch; gap: 40px; padding-top: 12px; }
 .reach-info { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
-.reach-phone { margin-top: 14px; font-size: clamp(18px, 2.2vw, 32px); line-height: 1.2; letter-spacing: -0.01em; color: var(--gray); transition: color .25s ease; }
-.reach-phone:hover { color: var(--white); }
 .reach-place { margin: 16px 0 0; font-size: 14px; letter-spacing: 0.03em; color: var(--gray-dark, #5E5B57); }
 .reach-links { display: flex; flex-wrap: wrap; gap: 12px 40px; margin-top: auto; padding-top: 48px; font-size: 16px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; }
 .reach-links a { transition: color .25s ease; }
@@ -1373,7 +1371,7 @@ button.tile { cursor: pointer; }
     .site-header, .reel-stack, .hero-hi, .hero-first, .hero-last, .hero-role, .hero-bar,
     .section-head .lead, .word, .section .tile, .tile-cap, .controls,
     .pills li, .bio-lead, .bio-text, .services li, .sectors .label,
-    .form .field, .form-end, .wa-banner, .big-mail, .reach-phone, .reach-place, .reach-links, .reach-photo, .footer-top > *, .footer-legal
+    .form .field, .form-end, .wa-banner, .big-mail, .reach-place, .reach-links, .reach-photo, .footer-top > *, .footer-legal
   ):not(.is-in) { opacity: 0; }
 
   .js .section-head { position: relative; border-top-color: transparent; }
